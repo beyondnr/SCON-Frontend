@@ -19,11 +19,19 @@ import { Payroll } from "@/lib/types";
 import { mockEmployees, mockSchedule, weekDays } from "@/lib/mock-data";
 import { formatCurrency, formatTime } from "@/lib/utils";
 import { ChevronDown, TrendingUp } from "lucide-react";
-import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
   const getEmployee = (id: string) => mockEmployees.find(e => e.id === id);
+  const [increasedState, setIncreasedState] = useState<{[key: string]: boolean}>({});
+
+  useEffect(() => {
+    const newIncreasedState: {[key: string]: boolean} = {};
+    payrolls.forEach(p => {
+        newIncreasedState[p.employeeId] = Math.random() > 0.5;
+    });
+    setIncreasedState(newIncreasedState);
+  }, [payrolls]);
 
   return (
     <Card className="print:shadow-none print:border-none">
@@ -45,11 +53,11 @@ export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
                     const employee = getEmployee(payroll.employeeId);
                     if (!employee) return null;
                     const specialPay = payroll.overtimePay + payroll.nightPay + payroll.holidayPay;
-                    const isIncreased = Math.random() > 0.5;
+                    const isIncreased = increasedState[payroll.employeeId];
 
                     return (
                         <Collapsible key={payroll.employeeId} asChild>
-                            <>
+                            <React.Fragment>
                                 <TableRow className="font-medium">
                                     <TableCell>
                                         <CollapsibleTrigger asChild>
@@ -93,7 +101,7 @@ export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
                                         </TableCell>
                                     </TableRow>
                                 </CollapsibleContent>
-                            </>
+                            </React.Fragment>
                         </Collapsible>
                     );
                     })}
