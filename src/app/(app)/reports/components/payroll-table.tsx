@@ -49,7 +49,7 @@ export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
 
                     return (
                         <Collapsible key={payroll.employeeId} asChild>
-                            <React.Fragment>
+                            <>
                                 <TableRow className="font-medium">
                                     <TableCell>
                                         <CollapsibleTrigger asChild>
@@ -93,7 +93,7 @@ export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
                                         </TableCell>
                                     </TableRow>
                                 </CollapsibleContent>
-                            </React.Fragment>
+                            </>
                         </Collapsible>
                     );
                     })}
