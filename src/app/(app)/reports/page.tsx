@@ -3,40 +3,8 @@ import { Download, Printer } from "lucide-react";
 import { PayrollTable } from "./components/payroll-table";
 import { mockPayrolls } from "@/lib/mock-data";
 import { formatCurrency } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
+import { ReportActions } from "./components/report-actions";
 
-function ReportActions() {
-    "use client";
-    const { toast } = useToast();
-
-    const handleDownload = (format: 'Excel' | 'PDF') => {
-        toast({
-            title: `${format} 다운로드 시작`,
-            description: `Mock ${format} 다운로드가 시작되었습니다.`,
-        });
-    };
-
-    const handlePrint = () => {
-        window.print();
-    };
-
-    return (
-        <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => handleDownload('Excel')}>
-                <Download className="mr-2 h-4 w-4" />
-                Excel 다운로드
-            </Button>
-            <Button variant="outline" onClick={() => handleDownload('PDF')}>
-                <Download className="mr-2 h-4 w-4" />
-                PDF 다운로드
-            </Button>
-            <Button variant="outline" onClick={handlePrint}>
-                <Printer className="mr-2 h-4 w-4" />
-                인쇄
-            </Button>
-        </div>
-    );
-}
 
 export default function ReportsPage() {
   const totalPayroll = mockPayrolls.reduce((sum, p) => sum + p.totalPay, 0);
