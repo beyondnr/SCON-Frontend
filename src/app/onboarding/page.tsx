@@ -10,6 +10,7 @@ import Step3Employees from "./components/step3-employees";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from "@/components/layout/logo";
+import { Form } from "@/components/ui/form";
 
 const steps = [
   { id: 1, component: Step1Account },
@@ -19,7 +20,7 @@ const steps = [
 
 function OnboardingWizard() {
   const [currentStep, setCurrentStep] = useState(1);
-  const { formData, validateAndGoNext } = useOnboarding();
+  const { form, formData, validateAndGoNext } = useOnboarding();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -35,7 +36,7 @@ function OnboardingWizard() {
   };
 
   const handleFinish = async () => {
-    const isValid = await validateAndGoNext(currentStep);
+    const isValid = await form.trigger();
     if (isValid) {
       console.log("Onboarding complete:", JSON.stringify(formData, null, 2));
       toast({
@@ -58,9 +59,11 @@ function OnboardingWizard() {
         </div>
         <div className="bg-card p-6 md:p-8 rounded-xl shadow-lg">
           <OnboardingProgress currentStep={currentStep} totalSteps={steps.length} />
-          <div className="mt-8">
-            <CurrentStepComponent />
-          </div>
+          <Form {...form}>
+            <form onSubmit={(e) => e.preventDefault()} className="mt-8">
+              <CurrentStepComponent />
+            </form>
+          </Form>
           <div className="mt-8 flex justify-between">
             <Button
               variant="outline"
