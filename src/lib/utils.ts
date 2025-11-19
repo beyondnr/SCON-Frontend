@@ -4,3 +4,12 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+export function formatCurrency(amount: number): string {
+  return amount.toLocaleString('ko-KR');
+}
+
+export function formatTime(time: string): string {
+  const [hour, minute] = time.split(':');
+  return `${hour}:${minute}`;
+}
