@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mockEmployees, weekDays } from "@/lib/mock-data";
 import { Schedule, TimeRange, Employee } from "@/lib/types";
@@ -49,8 +49,8 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
 
                         {/* Employee Rows */}
                         {mockEmployees.map(employee => (
-                            <>
-                                <div key={employee.id} className="bg-card p-3 text-sm font-medium sticky left-0 z-10">{employee.name}</div>
+                            <Fragment key={employee.id}>
+                                <div className="bg-card p-3 text-sm font-medium sticky left-0 z-10">{employee.name}</div>
                                 {weekDays.map(day => {
                                     const timeRange = schedule[day]?.[employee.id];
                                     const isViolation = employee.id === 'emp-1' && Math.random() < 0.1; // Simulate violation
@@ -68,7 +68,7 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
                                         </div>
                                     );
                                 })}
-                            </>
+                            </Fragment>
                         ))}
                     </div>
                 </CardContent>
