@@ -20,6 +20,7 @@ import { mockEmployees, mockSchedule, weekDays } from "@/lib/mock-data";
 import { formatCurrency, formatTime } from "@/lib/utils";
 import { ChevronDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import React from "react";
 
 export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
   const getEmployee = (id: string) => mockEmployees.find(e => e.id === id);
@@ -48,7 +49,7 @@ export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
 
                     return (
                         <Collapsible key={payroll.employeeId} asChild>
-                            <>
+                            <React.Fragment>
                                 <TableRow className="font-medium">
                                     <TableCell>
                                         <CollapsibleTrigger asChild>
@@ -92,7 +93,7 @@ export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
                                         </TableCell>
                                     </TableRow>
                                 </CollapsibleContent>
-                            </>
+                            </React.Fragment>
                         </Collapsible>
                     );
                     })}
