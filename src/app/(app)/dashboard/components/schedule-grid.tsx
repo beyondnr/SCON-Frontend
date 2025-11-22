@@ -3,16 +3,16 @@
 
 /**
  * [Script Purpose]
- * 직원별 주간 근무 스케줄을 그리드(테이블) 형태로 시각화하고 관리하는 컴포넌트입니다.
+ * 직원별 주간 근무표를 그리드(테이블) 형태로 시각화하고 관리하는 컴포넌트입니다.
  * 
  * [Logic & Data Flow]
- * 1. 스케줄 렌더링: 직원(행) x 요일(열) 매트릭스 구조로 스케줄을 표시합니다.
+ * 1. 근무표 렌더링: 직원(행) x 요일(열) 매트릭스 구조로 근무표를 표시합니다.
  * 2. 법규 위반 체크 (Simulation):
  *    - useEffect를 통해 컴포넌트 마운트 시 랜덤하게 특정 근무를 '법규 위반'으로 표시합니다.
  *    - 위반 시 붉은색 하이라이트와 아이콘 애니메이션을 적용합니다.
  * 3. 상호작용 (Interaction):
  *    - 셀 클릭 -> handleShiftClick -> 편집 모달(EditShiftDialog) 오픈
- *    - 모달 저장 -> handleSaveShift -> 로컬 스케줄 상태(schedule) 업데이트
+ *    - 모달 저장 -> handleSaveShift -> 로컬 근무표 상태(schedule) 업데이트
  */
 
 import { useState, Fragment, useEffect } from "react";
@@ -25,7 +25,7 @@ import { Calendar, Clock } from "lucide-react";
 
 /**
  * [Type Definition] ShiftInfo
- * 스케줄 수정 시 선택된 셀의 컨텍스트 정보를 담습니다.
+ * 근무표 수정 시 선택된 셀의 컨텍스트 정보를 담습니다.
  */
 type ShiftInfo = {
     employee: Employee;
@@ -38,7 +38,7 @@ type ViolationState = {
 };
 
 export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule }) {
-    // [State] 로컬 스케줄 데이터 및 UI 상태
+    // [State] 로컬 근무표 데이터 및 UI 상태
     const [schedule, setSchedule] = useState(initialSchedule);
     const [editingShift, setEditingShift] = useState<ShiftInfo | null>(null);
     const [violations, setViolations] = useState<ViolationState>({});
@@ -48,7 +48,7 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
         const newViolations: ViolationState = {};
         mockEmployees.forEach(employee => {
             weekDays.forEach(day => {
-                // 데모 목적: 특정 직원의 스케줄을 랜덤하게 위반으로 표시
+                // 데모 목적: 특정 직원의 근무표를 랜덤하게 위반으로 표시
                 if (employee.id === 'emp-1' && Math.random() < 0.1) {
                     newViolations[`${employee.id}-${day}`] = true;
                 }
@@ -67,7 +67,7 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
     };
 
     /**
-     * [Function] 스케줄 저장 핸들러
+     * [Function] 근무표 저장 핸들러
      * 다이얼로그에서 '저장' 버튼 클릭 시 호출됩니다.
      * 불변성을 유지하며 schedule 상태를 업데이트합니다.
      */
@@ -89,7 +89,7 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
                 <CardHeader className="border-b bg-muted/30 pb-4">
                     <div className="flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-primary" />
-                        <CardTitle className="font-headline text-xl">주간 스케줄 현황</CardTitle>
+                        <CardTitle className="font-headline text-xl">주간 근무표 현황</CardTitle>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0 overflow-x-auto">
@@ -103,7 +103,7 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
                                 <div key={day} className="bg-muted/30 p-4 font-semibold text-sm text-center text-foreground border-b">{day}</div>
                             ))}
 
-                            {/* [Body Rows] 직원별 스케줄 행 */}
+                            {/* [Body Rows] 직원별 근무표 행 */}
                             {mockEmployees.map(employee => (
                                 <Fragment key={employee.id}>
                                     {/* 직원 정보 컬럼 (Sticky) */}
@@ -163,7 +163,7 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
                 </CardContent>
             </Card>
 
-            {/* 스케줄 편집 모달 */}
+            {/* 근무표 편집 모달 */}
             <EditShiftDialog
                 isOpen={!!editingShift}
                 onClose={() => setEditingShift(null)}

@@ -1,0 +1,88 @@
+﻿
+> nextn@0.1.0 dev
+> next dev --turbopack -p 9002
+
+   ▲ Next.js 15.3.3 (Turbopack)
+   - Local:        http://localhost:9002
+   - Network:      http://192.168.0.20:9002
+
+ ✓ Starting...
+ ✓ Ready in 2.7s
+ ○ Compiling /availability ...
+ ✓ Compiled /availability in 6.9s
+ GET /availability 200 in 7689ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 957ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 1410ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.8s
+ GET / 200 in 3295ms
+ ✓ Compiled in 800ms
+ ✓ Compiled in 109ms
+ ✓ Compiled / in 150ms
+ GET / 200 in 427ms
+ ✓ Compiled in 103ms
+ ✓ Compiled in 220ms
+ ✓ Compiled / in 192ms
+ GET / 200 in 479ms
+ ✓ Compiled in 800ms
+ ✓ Compiled / in 238ms
+ GET / 200 in 748ms
+ ✓ Compiled in 90ms
+ ✓ Compiled / in 162ms
+ GET / 200 in 463ms
+ ✓ Compiled in 61ms
+ ✓ Compiled / in 113ms
+ GET / 200 in 308ms
+ ✓ Compiled in 86ms
+ ✓ Compiled / in 192ms
+ GET / 200 in 574ms
+ ✓ Compiled in 81ms
+ ✓ Compiled / in 163ms
+ GET / 200 in 482ms
+ GET / 200 in 313ms
+ ○ Compiling /onboarding ...
+ ✓ Compiled /onboarding in 1981ms
+ GET /onboarding 200 in 2165ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1275ms
+ GET /dashboard 200 in 1419ms
+ ○ Compiling /_not-found/page ...
+ ✓ Compiled /_not-found/page in 1558ms
+ GET /avatars/1.png 404 in 2108ms
+ GET /avatars/3.png 404 in 2273ms
+ GET /avatars/4.png 404 in 2331ms
+ GET /avatars/2.png 404 in 2349ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1641ms
+ GET /reports 200 in 1888ms
+ GET /dashboard 200 in 299ms
+ GET /avatars/1.png 404 in 819ms
+ GET /avatars/2.png 404 in 943ms
+ GET /avatars/3.png 404 in 981ms
+ GET /avatars/4.png 404 in 989ms
+ ✓ Compiled in 100ms
+ GET /reports 200 in 196ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1553ms
+ GET /settings 200 in 1794ms
+ GET /dashboard 200 in 405ms
+ GET /avatars/2.png 404 in 686ms
+ GET /avatars/4.png 404 in 735ms
+ GET /avatars/3.png 404 in 739ms
+ GET /avatars/1.png 404 in 755ms
+ ○ Compiling /availability ...
+ ✓ Compiled /availability in 510ms
+ GET /availability 200 in 813ms
+ GET /avatars/2.png 404 in 745ms
+ GET /avatars/3.png 404 in 937ms
+ GET /avatars/4.png 404 in 1048ms
+ GET /avatars/1.png 404 in 1058ms
+ GET / 200 in 372ms
+ ✓ Compiled in 510ms
+ ✓ Compiled in 400ms
+ GET /dashboard 200 in 975ms
+ GET /avatars/3.png 404 in 663ms
+ GET /avatars/1.png 404 in 846ms
+ GET /avatars/2.png 404 in 847ms
+ GET /avatars/4.png 404 in 937ms

@@ -3,12 +3,12 @@
 
 /**
  * [Script Purpose]
- * 스케줄 대시보드 메인 페이지입니다.
+ * 근무표 대시보드 메인 페이지입니다.
  *
  * [Logic & Data Flow]
- * 1. 초기 데이터 로드: mock-data.ts에서 급여(payrolls)와 스케줄(schedule) 데이터를 가져옵니다.
+ * 1. 초기 데이터 로드: mock-data.ts에서 급여(payrolls)와 근무표(schedule) 데이터를 가져옵니다.
  * 2. 상태 관리 (useState):
- *    - data: 급여, 스케줄, 승인 대기 건수를 통합 관리합니다.
+ *    - data: 급여, 근무표, 승인 대기 건수를 통합 관리합니다.
  *    - isLoading: 데이터 갱신 중 UI 잠금 처리를 위함입니다.
  * 3. 데이터 갱신 (handleRefresh):
  *    - 네트워크 요청을 시뮬레이션(setTimeout)하여 승인 대기 건수를 랜덤하게 변경합니다.
@@ -66,7 +66,7 @@ export default function DashboardPage() {
             
             toast({
                 title: "데이터 업데이트 완료",
-                description: "최신 스케줄 및 급여 정보를 불러왔습니다.",
+                description: "최신 근무표 및 급여 정보를 불러왔습니다.",
             });
         }, 1000);
     };
@@ -76,8 +76,8 @@ export default function DashboardPage() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-4xl font-extrabold tracking-tight font-headline text-foreground">스케줄 대시보드</h1>
-                    <p className="text-lg text-muted-foreground">이번 주 스케줄을 검토하고 승인하세요.</p>
+                    <h1 className="text-4xl font-extrabold tracking-tight font-headline text-foreground">근무표 대시보드</h1>
+                    <p className="text-lg text-muted-foreground">이번 주 근무표를 검토하고 승인하세요.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Button 
@@ -99,8 +99,8 @@ export default function DashboardPage() {
                 <SummaryCards totalPayroll={totalPayroll} pendingSchedules={data.pendingSchedules} />
             </section>
             
-            {/* Grid Section: 주간 스케줄 테이블 */}
-            <section aria-label="주간 스케줄표">
+            {/* Grid Section: 주간 근무표 테이블 */}
+            <section aria-label="주간 근무표">
                 <ScheduleGrid schedule={data.schedule} />
             </section>
         </div>

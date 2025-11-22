@@ -117,9 +117,11 @@ graph TD
   * **Headline**: `PT Sans` - 전문적이고 가독성 높은 헤드라인
   * **Body**: `Inter` - 깔끔하고 현대적인 본문 폰트
 * **Color Palette**:
-  * **Primary**: 신뢰감을 주는 Blue 계열
-  * **Semantic**: Success(Green), Warning(Yellow), Destructive(Red) 등 기능적 색상 정의
-  * **Dark Mode**: 시스템 설정에 따른 다크 모드 완벽 지원
+  * **Primary**: 잘 구워진 스콘의 겉면 색 (#C68E5E) - 따뜻하고 신뢰감 있는 메인 컬러
+  * **Secondary**: 라떼 폼 같은 부드러운 베이지 (#EAE0D5) - 보조 및 배경 요소
+  * **Accent**: 차분한 벽돌색 (#D9534F) - 강조 및 알림
+  * **Background**: 눈이 편안한 크림색 (#F9F7F2)
+  * **Text**: 가독성을 고려한 에스프레소 색 (#3E3B36)
 * **Components**:
   * Shadcn UI 기반의 일관된 컴포넌트 디자인
   * 접근성(Accessibility)이 고려된 Radix UI Primitives 사용

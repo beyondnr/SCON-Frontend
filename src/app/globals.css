@@ -8,73 +8,105 @@ body {
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 210 10% 23%;
-    --card: 210 40% 100%;
-    --card-foreground: 210 10% 23%;
-    --popover: 210 40% 100%;
-    --popover-foreground: 210 10% 23%;
-    --primary: 210 60% 55%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 202 65% 90%;
-    --secondary-foreground: 202 20% 20%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 210 8% 45%;
-    --accent: 169 36% 66%;
-    --accent-foreground: 169 20% 15%;
-    --destructive: 0 84.2% 60.2%;
+    /* 
+      Design Concept: "SCON" (Warm Neutral / Bakery)
+      Target: 50-60s store owners (Legibility First)
+    */
+    
+    /* Background: Modern Off-white/Cream base (F9F7F2 -> F5F2EE) -> HSL(35, 25%, 95%) */
+    --background: 35 25% 95%;
+    
+    /* Foreground: Espresso/Dark Brown (Darker) (3E3B36 -> 2C2A26) -> HSL(37, 8%, 16%) */
+    --foreground: 37 8% 16%;
+
+    /* Card: Slightly lighter cream or white for contrast */
+    --card: 0 0% 100%;
+    --card-foreground: 37 7% 23%;
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 37 7% 23%;
+
+    /* Primary: Deep Baked Brown (C68E5E -> 8B5E3C) -> HSL(28, 40%, 39%) for better contrast/weight */
+    --primary: 28 40% 39%;
+    --primary-foreground: 40 33% 96%; /* Light text on primary */
+
+    /* Secondary: Warm Beige/Latte Foam (EAE0D5) -> HSL(31, 28%, 88%) */
+    --secondary: 31 28% 88%;
+    --secondary-foreground: 37 7% 23%;
+
+    /* Muted: Greige/Neutral (F0EEEA) -> HSL(40, 15%, 93%) */
+    --muted: 40 15% 93%;
+    --muted-foreground: 37 5% 45%;
+
+    /* Accent: Soft Brick/Terracotta for highlights (D9534F) -> HSL(4, 66%, 58%) */
+    --accent: 31 28% 88%; /* Using secondary tone for accent base */
+    --accent-foreground: 28 47% 57%;
+
+    /* Destructive: Brick Red (D9534F) -> HSL(4, 66%, 58%) */
+    --destructive: 4 66% 58%;
     --destructive-foreground: 0 0% 98%;
-    --border: 210 20% 90%;
-    --input: 210 20% 94%;
-    --ring: 210 60% 55%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+
+    /* Border: Warm Grey/Taupe (DCD7D0) -> HSL(40, 12%, 84%) */
+    --border: 40 12% 84%;
+    --input: 40 12% 84%;
+    --ring: 28 47% 57%; /* Primary color ring */
+
+    /* Charts: Warm & Natural Tones */
+    --chart-1: 28 47% 57%;  /* Scone */
+    --chart-2: 35 30% 45%;  /* Coffee */
+    --chart-3: 140 25% 50%; /* Matcha/Sage */
+    --chart-4: 4 66% 58%;   /* Berry */
+    --chart-5: 40 30% 70%;  /* Dough */
+
+    /* Radius: Slightly rounded (Rounded-md/lg) */
     --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Sidebar: Matches background or slightly darker */
+    --sidebar-background: 40 33% 96%;
+    --sidebar-foreground: 37 7% 23%;
+    --sidebar-primary: 28 47% 57%;
+    --sidebar-primary-foreground: 40 33% 96%;
+    --sidebar-accent: 31 28% 88%;
+    --sidebar-accent-foreground: 37 7% 23%;
+    --sidebar-border: 40 12% 84%;
+    --sidebar-ring: 28 47% 57%;
   }
+
+  /* Dark Mode: Dark Roast Coffee Theme (Optional, adjusting for warm darks) */
   .dark {
-    --background: 210 10% 10%;
-    --foreground: 210 40% 98%;
-    --card: 210 10% 15%;
-    --card-foreground: 210 40% 98%;
-    --popover: 210 10% 10%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 60% 55%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 202 65% 30%;
-    --secondary-foreground: 202 20% 90%;
-    --muted: 210 10% 20%;
-    --muted-foreground: 210 10% 65%;
-    --accent: 169 36% 40%;
-    --accent-foreground: 169 20% 90%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 25 15% 12%; /* Dark Coffee Bean */
+    --foreground: 40 33% 90%; /* Cream */
+    --card: 25 15% 15%;
+    --card-foreground: 40 33% 90%;
+    --popover: 25 15% 15%;
+    --popover-foreground: 40 33% 90%;
+    --primary: 28 47% 57%; /* Keep Scone color */
+    --primary-foreground: 40 33% 96%;
+    --secondary: 25 15% 20%;
+    --secondary-foreground: 40 33% 90%;
+    --muted: 25 15% 20%;
+    --muted-foreground: 40 20% 60%;
+    --accent: 25 15% 20%;
+    --accent-foreground: 40 33% 90%;
+    --destructive: 4 66% 58%;
     --destructive-foreground: 0 0% 98%;
-    --border: 210 10% 30%;
-    --input: 210 10% 25%;
-    --ring: 210 60% 55%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 25 15% 25%;
+    --input: 25 15% 25%;
+    --ring: 28 47% 57%;
+    --chart-1: 28 47% 57%;
+    --chart-2: 35 30% 45%;
+    --chart-3: 140 25% 50%;
+    --chart-4: 4 66% 58%;
+    --chart-5: 40 30% 70%;
+    --sidebar-background: 25 15% 12%;
+    --sidebar-foreground: 40 33% 90%;
+    --sidebar-primary: 28 47% 57%;
+    --sidebar-primary-foreground: 40 33% 96%;
+    --sidebar-accent: 25 15% 20%;
+    --sidebar-accent-foreground: 40 33% 90%;
+    --sidebar-border: 25 15% 25%;
+    --sidebar-ring: 28 47% 57%;
   }
 }
 
@@ -86,5 +118,18 @@ body {
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    
+    /* Typography Updates for Legibility */
+    font-size: 16px; /* Base size increased */
+    line-height: 1.6; /* Relaxed spacing */
   }
+
+  /* Explicitly set headings for readability */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline font-bold text-foreground tracking-tight;
+  }
+  
+  h1 { @apply text-3xl md:text-4xl lg:text-5xl; }
+  h2 { @apply text-2xl md:text-3xl; }
+  h3 { @apply text-xl md:text-2xl; }
 }

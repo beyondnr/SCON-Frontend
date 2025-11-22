@@ -4,15 +4,15 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const cardVariants = cva(
-  "rounded-lg border shadow-sm",
+  "rounded-lg border-2 shadow-sm bg-card text-card-foreground", // SCON: Thicker border, reduced shadow emphasis
   {
     variants: {
       variant: {
-        default: "bg-card text-card-foreground",
-        primary: "bg-primary text-primary-foreground border-primary",
-        secondary: "bg-secondary text-secondary-foreground border-transparent",
-        destructive: "bg-destructive text-destructive-foreground border-destructive",
-        outline: "bg-transparent border-border text-foreground",
+        default: "border-border", // Default distinct border
+        primary: "bg-primary/5 border-primary text-foreground", // Light primary tint
+        secondary: "bg-secondary/20 border-transparent", 
+        destructive: "bg-destructive/10 border-destructive text-destructive",
+        outline: "bg-transparent border-2 border-border",
         ghost: "border-none shadow-none bg-transparent",
       },
     },

@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "LawfulShift PoC",
-  description: "직원 스케줄 & 급여 관리 SaaS",
+  title: "SCON PoC",
+  description: "직원 근무표 & 급여 관리 SaaS",
 };
 
 export default function RootLayout({
