@@ -50,8 +50,8 @@
 1. 프로젝트 클론 및 이동:
 
    ```bash
-   git clone --recursive https://github.com/beyondnr/BA-to-SW-Dev.git
-   cd Frontend/firebase-shift-roster
+   git clone https://github.com/beyondnr/SCON-Firebase.git
+   cd SCON-Firebase
    ```
 2. 의존성 패키지 설치:
 

@@ -21,10 +21,12 @@
 
 import { useState } from "react";
 import { ScheduleGrid } from "./components/schedule-grid";
+import { TimeScheduleTable } from "./components/time-schedule-table";
 import { SummaryCards } from "./components/summary-cards";
 import { mockPayrolls, mockSchedule } from "@/lib/mock-data";
-import { ApproveButton } from "./components/approve-button";
+import { DashboardActions } from "./components/dashboard-actions";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -90,7 +92,7 @@ export default function DashboardPage() {
                     >
                         <RefreshCw className={`h-5 w-5 ${isLoading ? 'animate-spin text-primary' : 'text-muted-foreground'}`} />
                     </Button>
-                    <ApproveButton />
+                    <DashboardActions />
                 </div>
             </div>
             
@@ -101,7 +103,20 @@ export default function DashboardPage() {
             
             {/* Grid Section: 주간 근무표 테이블 */}
             <section aria-label="주간 근무표">
-                <ScheduleGrid schedule={data.schedule} />
+                <Tabs defaultValue="employee" className="w-full space-y-4">
+                    <div className="flex justify-end">
+                        <TabsList className="grid w-[300px] grid-cols-2">
+                            <TabsTrigger value="employee">직원별 보기</TabsTrigger>
+                            <TabsTrigger value="time">시간대별 보기</TabsTrigger>
+                        </TabsList>
+                    </div>
+                    <TabsContent value="employee" className="mt-0">
+                        <ScheduleGrid schedule={data.schedule} />
+                    </TabsContent>
+                    <TabsContent value="time" className="mt-0">
+                        <TimeScheduleTable schedule={data.schedule} />
+                    </TabsContent>
+                </Tabs>
             </section>
         </div>
     );

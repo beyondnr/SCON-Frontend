@@ -17,6 +17,7 @@
 
 import { useState, Fragment, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { mockEmployees, weekDays } from "@/lib/mock-data";
 import { Schedule, TimeRange, Employee } from "@/lib/types";
 import { cn, formatTime } from "@/lib/utils";
@@ -108,13 +109,12 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
                                 <Fragment key={employee.id}>
                                     {/* 직원 정보 컬럼 (Sticky) */}
                                     <div className="bg-background p-4 text-sm font-medium sticky left-0 z-10 border-r shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] flex items-center gap-3">
-                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs overflow-hidden">
-                                            {employee.avatarUrl ? (
-                                                <img src={employee.avatarUrl} alt={employee.name} className="h-full w-full object-cover" />
-                                            ) : (
-                                                employee.name[0]
-                                            )}
-                                        </div>
+                                        <Avatar className="h-8 w-8">
+                                            <AvatarImage src={employee.avatarUrl} alt={employee.name} className="object-cover" />
+                                            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
+                                                {employee.name[0]}
+                                            </AvatarFallback>
+                                        </Avatar>
                                         <div className="flex flex-col">
                                             <span className="text-foreground">{employee.name}</span>
                                             <span className="text-xs text-muted-foreground font-normal">{employee.role}</span>

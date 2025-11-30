@@ -43,3 +43,8 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# IDE (from BA-to-SW-Dev/Frontend)
+.idea/
+*.swp
+*.swo

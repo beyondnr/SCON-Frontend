@@ -1,0 +1,18 @@
+query {
+  user(login: "beyondnr") {
+    projectV2(number: 1) {
+      id
+      title
+      fields(first: 20) {
+        nodes {
+          ... on ProjectV2Field {
+            id
+            name
+            dataType
+          }
+        }
+      }
+    }
+  }
+}
+
