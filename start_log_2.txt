@@ -86,3 +86,786 @@
  GET /avatars/1.png 404 in 846ms
  GET /avatars/2.png 404 in 847ms
  GET /avatars/4.png 404 in 937ms
+ GET /reports 200 in 347ms
+ GET / 200 in 236ms
+ GET /dashboard 200 in 319ms
+ GET /avatars/2.png 404 in 551ms
+ GET /avatars/4.png 404 in 601ms
+ GET /avatars/1.png 404 in 647ms
+ GET /avatars/3.png 404 in 647ms
+ GET /settings 200 in 233ms
+ GET /reports 200 in 214ms
+ ✓ Compiled in 174ms
+ ✓ Compiled in 314ms
+ ✓ Compiled in 301ms
+ GET /dashboard 200 in 345ms
+ GET /avatars/3.png 404 in 460ms
+ GET /avatars/2.png 404 in 585ms
+ GET /avatars/4.png 404 in 581ms
+ GET /avatars/1.png 404 in 590ms
+ GET /avatars/4.png 404 in 351ms
+ GET /avatars/1.png 404 in 447ms
+ GET /avatars/2.png 404 in 449ms
+ GET /avatars/3.png 404 in 489ms
+ GET /avatars/1.png 404 in 367ms
+ GET /avatars/4.png 404 in 435ms
+ GET /avatars/2.png 404 in 440ms
+ GET /avatars/3.png 404 in 483ms
+ GET /avatars/1.png 404 in 397ms
+ GET /avatars/4.png 404 in 522ms
+ GET /avatars/3.png 404 in 527ms
+ GET /avatars/2.png 404 in 532ms
+ ✓ Compiled in 483ms
+ GET /avatars/4.png 404 in 476ms
+ GET /avatars/3.png 404 in 911ms
+ GET /avatars/2.png 404 in 929ms
+ GET /avatars/1.png 404 in 996ms
+ GET /dashboard 200 in 917ms
+ GET /avatars/3.png 404 in 1087ms
+ GET /avatars/1.png 404 in 1106ms
+ GET /avatars/2.png 404 in 1096ms
+ GET /avatars/4.png 404 in 1150ms
+ GET /avatars/4.png 404 in 394ms
+ GET /avatars/1.png 404 in 530ms
+ GET /avatars/2.png 404 in 528ms
+ GET /avatars/3.png 404 in 526ms
+ GET /dashboard 200 in 366ms
+ GET /avatars/1.png 404 in 550ms
+ GET /avatars/2.png 404 in 701ms
+ GET /avatars/4.png 404 in 697ms
+ GET /avatars/3.png 404 in 711ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 440ms
+ ✓ Compiled in 150ms
+ ✓ Compiled in 254ms
+ ✓ Compiled /dashboard in 304ms
+ GET /dashboard 200 in 753ms
+ GET /avatars/2.png 404 in 821ms
+ GET /avatars/1.png 404 in 847ms
+ ✓ Compiled in 337ms
+ GET /avatars/3.png 404 in 1057ms
+ GET /avatars/4.png 404 in 1171ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 559ms
+ ✓ Compiled in 107ms
+ ✓ Compiled in 89ms
+ ✓ Compiled in 84ms
+ GET /avatars/3.png 404 in 490ms
+ GET /avatars/2.png 404 in 668ms
+ GET /avatars/4.png 404 in 673ms
+ GET /avatars/1.png 404 in 677ms
+ ✓ Compiled in 157ms
+ ✓ Compiled in 64ms
+ ✓ Compiled in 57ms
+ GET /reports 200 in 655ms
+ GET /dashboard 200 in 335ms
+ GET /avatars/2.png 404 in 403ms
+ GET /avatars/3.png 404 in 510ms
+ GET /avatars/4.png 404 in 513ms
+ GET /avatars/1.png 404 in 582ms
+ GET /reports 200 in 398ms
+ GET /dashboard 200 in 186ms
+ GET /avatars/1.png 404 in 370ms
+ GET /avatars/3.png 404 in 503ms
+ GET /avatars/4.png 404 in 511ms
+ GET /avatars/2.png 404 in 529ms
+ GET /reports 200 in 278ms
+ GET /dashboard 200 in 200ms
+ GET /avatars/2.png 404 in 353ms
+ GET /avatars/3.png 404 in 456ms
+ GET /avatars/1.png 404 in 463ms
+ GET /avatars/4.png 404 in 531ms
+ GET /reports 200 in 312ms
+ ✓ Compiled in 87ms
+ ✓ Compiled in 71ms
+ ✓ Compiled in 101ms
+ GET /availability 200 in 196ms
+ ✓ Compiled in 291ms
+ GET /availability 200 in 611ms
+ GET /availability 200 in 282ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 375ms
+ GET /availability 200 in 285ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 380ms
+ ✓ Compiled in 390ms
+ GET / 200 in 223ms
+ GET /dashboard 200 in 1215ms
+ GET /avatars/1.png 404 in 802ms
+ GET /avatars/4.png 404 in 1148ms
+ GET /avatars/2.png 404 in 1175ms
+ GET /avatars/3.png 404 in 1275ms
+ GET /avatars/2.png 404 in 381ms
+ GET /avatars/1.png 404 in 440ms
+ GET /avatars/3.png 404 in 544ms
+ GET /avatars/4.png 404 in 543ms
+ ✓ Compiled in 196ms
+ GET /avatars/3.png 404 in 420ms
+ GET /avatars/4.png 404 in 575ms
+ GET /avatars/1.png 404 in 582ms
+ GET /avatars/2.png 404 in 586ms
+ ✓ Compiled in 268ms
+ GET /availability 200 in 325ms
+ GET /avatars/4.png 404 in 393ms
+ GET /avatars/1.png 404 in 557ms
+ GET /avatars/3.png 404 in 552ms
+ GET /avatars/2.png 404 in 555ms
+ ✓ Compiled in 79ms
+ ✓ Compiled in 74ms
+ ✓ Compiled in 154ms
+ ✓ Compiled in 109ms
+ ✓ Compiled in 111ms
+ ✓ Compiled in 70ms
+ GET /avatars/1.png 404 in 536ms
+ GET /avatars/4.png 404 in 871ms
+ GET /avatars/3.png 404 in 874ms
+ ✓ Compiled in 326ms
+ GET /avatars/2.png 404 in 1144ms
+ ✓ Compiled in 672ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 594ms
+ GET /dashboard 200 in 1285ms
+ GET /dashboard 200 in 1575ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 528ms
+ GET /avatars/4.png 404 in 1209ms
+ GET /avatars/3.png 404 in 1217ms
+ GET /avatars/2.png 404 in 1230ms
+ GET /avatars/1.png 404 in 1311ms
+ GET /avatars/1.png 404 in 429ms
+ GET /avatars/4.png 404 in 554ms
+ GET /avatars/3.png 404 in 560ms
+ GET /avatars/2.png 404 in 564ms
+ GET /avatars/4.png 404 in 402ms
+ GET /avatars/3.png 404 in 439ms
+ GET /avatars/1.png 404 in 448ms
+ GET /avatars/2.png 404 in 481ms
+ GET /avatars/1.png 404 in 460ms
+ GET /avatars/4.png 404 in 497ms
+ GET /avatars/2.png 404 in 507ms
+ GET /avatars/3.png 404 in 507ms
+ GET /avatars/4.png 404 in 412ms
+ GET /avatars/3.png 404 in 497ms
+ GET /avatars/1.png 404 in 521ms
+ GET /avatars/2.png 404 in 514ms
+ ✓ Compiled in 103ms
+ GET /reports 200 in 379ms
+ ✓ Compiled in 269ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 729ms
+ GET /reports 200 in 1122ms
+ GET /reports 200 in 439ms
+ ✓ Compiled in 626ms
+ ✓ Compiled in 351ms
+ ✓ Compiled /reports in 253ms
+ GET /reports 200 in 553ms
+ ✓ Compiled in 366ms
+ ✓ Compiled in 272ms
+ ✓ Compiled /reports in 244ms
+ GET /reports 200 in 454ms
+ ✓ Compiled in 79ms
+ ✓ Compiled in 120ms
+ GET / 200 in 298ms
+ GET /reports 200 in 563ms
+ GET /reports 200 in 392ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 427ms
+ ✓ Compiled in 159ms
+ ✓ Compiled in 157ms
+ GET /reports 200 in 1289ms
+ GET /reports 200 in 1375ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 479ms
+ ✓ Compiled /settings in 166ms
+ GET /settings 200 in 445ms
+ ✓ Compiled in 292ms
+ ✓ Compiled in 637ms
+ GET /reports 200 in 404ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 531ms
+ GET /settings 200 in 923ms
+ GET /avatars/3.png 404 in 528ms
+ GET /avatars/2.png 404 in 664ms
+ GET /avatars/1.png 404 in 682ms
+ GET /avatars/4.png 404 in 739ms
+ GET /dashboard 200 in 373ms
+ GET /avatars/1.png 404 in 595ms
+ GET /avatars/4.png 404 in 644ms
+ GET /avatars/3.png 404 in 662ms
+ GET /avatars/2.png 404 in 668ms
+ GET /settings 200 in 413ms
+ GET /avatars/1.png 404 in 980ms
+ GET /avatars/4.png 404 in 1059ms
+ GET /avatars/3.png 404 in 1207ms
+ GET /avatars/2.png 404 in 1212ms
+ ✓ Compiled in 37ms
+ ✓ Compiled in 85ms
+ ✓ Compiled in 196ms
+ ✓ Compiled in 55ms
+ GET /settings 200 in 671ms
+ GET /avatars/3.png 404 in 455ms
+ GET /avatars/2.png 404 in 578ms
+ GET /avatars/1.png 404 in 583ms
+ GET /avatars/4.png 404 in 636ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 475ms
+ ✓ Compiled in 90ms
+ GET /dashboard 200 in 589ms
+ GET /avatars/4.png 404 in 970ms
+ GET /avatars/2.png 404 in 1082ms
+ GET /avatars/1.png 404 in 1444ms
+ GET /avatars/3.png 404 in 1475ms
+ GET /settings 200 in 568ms
+ GET /avatars/1.png 404 in 589ms
+ GET /avatars/2.png 404 in 640ms
+ GET /avatars/4.png 404 in 637ms
+ GET /avatars/3.png 404 in 704ms
+ ✓ Compiled in 125ms
+ ✓ Compiled /reports in 267ms
+ ✓ Compiled /settings in 156ms
+ GET /settings 200 in 643ms
+ GET /reports 200 in 639ms
+ GET /settings 200 in 466ms
+ GET /reports 200 in 505ms
+ GET /settings 200 in 596ms
+ GET /reports 200 in 597ms
+ GET /settings 200 in 586ms
+ GET /reports 200 in 546ms
+ GET /settings 200 in 365ms
+ GET /reports 200 in 396ms
+ ✓ Compiled in 112ms
+ GET /reports 200 in 474ms
+ GET /settings 200 in 524ms
+ GET /settings 200 in 574ms
+ GET /reports 200 in 680ms
+ ✓ Compiled in 100ms
+ ✓ Compiled in 169ms
+ ✓ Compiled in 246ms
+ ✓ Compiled in 96ms
+ GET /settings 200 in 700ms
+ ✓ Compiled /_not-found/page in 407ms
+ GET /avatars/1.png 404 in 789ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 932ms
+ GET /avatars/4.png 404 in 1174ms
+ GET /avatars/2.png 404 in 1189ms
+ GET /avatars/3.png 404 in 1196ms
+ ✓ Compiled /dashboard in 289ms
+ GET /dashboard 200 in 582ms
+ GET /avatars/2.png 404 in 604ms
+ GET /avatars/1.png 404 in 679ms
+ GET /avatars/4.png 404 in 679ms
+ GET /avatars/3.png 404 in 691ms
+ GET /reports 200 in 194ms
+ GET /settings 200 in 213ms
+ GET /avatars/4.png 404 in 475ms
+ GET /avatars/1.png 404 in 518ms
+ GET /avatars/3.png 404 in 523ms
+ GET /avatars/2.png 404 in 574ms
+ ✓ Compiled in 94ms
+ ✓ Compiled /reports in 247ms
+ GET /reports 200 in 483ms
+ GET /settings 200 in 620ms
+ GET /reports 200 in 509ms
+ GET /settings 200 in 522ms
+ ✓ Compiled in 244ms
+ GET /reports 200 in 688ms
+ GET /settings 200 in 685ms
+ GET /reports 200 in 998ms
+ GET /settings 200 in 1016ms
+ GET /reports 200 in 768ms
+ GET /settings 200 in 841ms
+ ✓ Compiled in 202ms
+ GET /reports 200 in 859ms
+ GET /settings 200 in 1181ms
+ GET /reports 200 in 828ms
+ GET /settings 200 in 543ms
+ ✓ Compiled in 133ms
+ GET /settings 200 in 628ms
+ ✓ Compiled /_not-found/page in 359ms
+ GET /avatars/2.png 404 in 787ms
+ GET /avatars/3.png 404 in 950ms
+ GET /avatars/4.png 404 in 954ms
+ GET /avatars/1.png 404 in 1019ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 516ms
+ ✓ Compiled /dashboard in 106ms
+ GET /dashboard 200 in 253ms
+ GET /avatars/1.png 404 in 619ms
+ GET /avatars/4.png 404 in 620ms
+ GET /avatars/2.png 404 in 674ms
+ GET /avatars/3.png 404 in 669ms
+ GET /reports 200 in 209ms
+ GET /settings 200 in 198ms
+ GET /avatars/3.png 404 in 515ms
+ GET /avatars/1.png 404 in 587ms
+ GET /avatars/2.png 404 in 594ms
+ GET /avatars/4.png 404 in 591ms
+ ✓ Compiled /availability in 163ms
+ GET /availability 200 in 684ms
+ GET /avatars/3.png 404 in 514ms
+ GET /avatars/1.png 404 in 675ms
+ GET /avatars/4.png 404 in 675ms
+ GET /avatars/2.png 404 in 680ms
+ GET /dashboard 200 in 223ms
+ GET /avatars/1.png 404 in 601ms
+ GET /avatars/4.png 404 in 670ms
+ GET /avatars/3.png 404 in 682ms
+ GET /avatars/2.png 404 in 760ms
+ GET /availability 200 in 255ms
+ GET /avatars/3.png 404 in 859ms
+ GET /avatars/4.png 404 in 1108ms
+ GET /avatars/2.png 404 in 1142ms
+ GET /avatars/1.png 404 in 1152ms
+ GET /dashboard 200 in 1461ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 430ms
+ GET /avatars/3.png 404 in 530ms
+ GET /avatars/2.png 404 in 541ms
+ GET /avatars/1.png 404 in 641ms
+ GET /avatars/4.png 404 in 637ms
+ ✓ Compiled in 158ms
+ ✓ Compiled in 90ms
+ ✓ Compiled in 179ms
+ GET /availability 200 in 597ms
+ ✓ Compiled in 93ms
+ ✓ Compiled in 559ms
+ ○ Compiling /availability ...
+ GET /reports 200 in 630ms
+ ✓ Compiled /availability in 651ms
+ GET /availability 200 in 890ms
+ ✓ Compiled in 256ms
+ GET /avatars/4.png 404 in 490ms
+ GET /avatars/1.png 404 in 651ms
+ GET /avatars/2.png 404 in 647ms
+ GET /avatars/3.png 404 in 656ms
+ GET /availability 200 in 350ms
+ GET /avatars/1.png 404 in 475ms
+ GET /avatars/3.png 404 in 617ms
+ GET /avatars/2.png 404 in 625ms
+ GET /avatars/4.png 404 in 623ms
+ GET /avatars/2.png 404 in 409ms
+ GET /avatars/1.png 404 in 523ms
+ GET /avatars/4.png 404 in 524ms
+ GET /avatars/3.png 404 in 531ms
+ GET /avatars/4.png 404 in 476ms
+ GET /avatars/1.png 404 in 548ms
+ GET /avatars/2.png 404 in 647ms
+ GET /avatars/3.png 404 in 656ms
+ GET /avatars/4.png 404 in 441ms
+ GET /avatars/2.png 404 in 548ms
+ GET /avatars/3.png 404 in 558ms
+ GET /avatars/1.png 404 in 611ms
+ GET /settings 200 in 389ms
+ GET /avatars/1.png 404 in 471ms
+ GET /avatars/3.png 404 in 500ms
+ GET /avatars/4.png 404 in 509ms
+ GET /avatars/2.png 404 in 562ms
+ GET /availability 200 in 219ms
+ GET /avatars/1.png 404 in 747ms
+ GET /avatars/4.png 404 in 743ms
+ GET /avatars/3.png 404 in 741ms
+ GET /avatars/2.png 404 in 746ms
+ GET /avatars/4.png 404 in 754ms
+ GET /avatars/3.png 404 in 815ms
+ GET /avatars/1.png 404 in 822ms
+ GET /avatars/2.png 404 in 823ms
+ GET /avatars/4.png 404 in 450ms
+ GET /avatars/1.png 404 in 501ms
+ GET /avatars/3.png 404 in 506ms
+ GET /avatars/2.png 404 in 566ms
+ GET /availability 200 in 244ms
+ GET /avatars/1.png 404 in 610ms
+ GET /avatars/2.png 404 in 699ms
+ GET /avatars/3.png 404 in 766ms
+ GET /avatars/4.png 404 in 828ms
+ ✓ Compiled in 75ms
+ ✓ Compiled /reports in 230ms
+ GET /availability 200 in 547ms
+ GET /reports 200 in 555ms
+ GET /availability 200 in 346ms
+ GET /reports 200 in 358ms
+ GET /availability 200 in 342ms
+ GET /reports 200 in 386ms
+ GET /availability 200 in 543ms
+ GET /reports 200 in 636ms
+ GET /availability 200 in 518ms
+ GET /reports 200 in 505ms
+ GET /availability 200 in 682ms
+ GET /reports 200 in 739ms
+ GET /availability 200 in 783ms
+ GET /reports 200 in 767ms
+ ✓ Compiled /_not-found/page in 356ms
+ GET /avatars/1.png 404 in 1151ms
+ GET /avatars/4.png 404 in 1218ms
+ GET /avatars/2.png 404 in 1232ms
+ GET /avatars/3.png 404 in 1239ms
+ GET /availability 200 in 402ms
+ GET /avatars/3.png 404 in 423ms
+ GET /avatars/4.png 404 in 563ms
+ GET /avatars/1.png 404 in 579ms
+ GET /avatars/2.png 404 in 576ms
+ GET /avatars/4.png 404 in 626ms
+ GET /avatars/3.png 404 in 631ms
+ GET /avatars/1.png 404 in 727ms
+ GET /avatars/2.png 404 in 721ms
+ ✓ Compiled in 86ms
+ GET /availability 200 in 1000ms
+node.exe :  ⨯ ReferenceError: maskName is not defined
+위치 줄:1 문자:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( ⨯ ReferenceErr... is not defined:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    at AvailabilityForm (src\app\availability\page.tsx:90:9)
+  88 |     return (
+  89 |         <Card className="w-full max-w-md shadow-lg">
+> 90 | import { maskName } from '@/lib/utils';
+     |         ^
+  91 | // ...
+  92 |             <CardHeader className="text-center">
+  93 |                 <CardTitle className="text-2xl font-headline"> {
+  digest: '498911162'
+}
+ GET /availability 500 in 482ms
+ GET /favicon.ico 200 in 484ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 155ms
+ ⨯ ReferenceError: employee is not defined
+    at AvailabilityForm (src\app\availability\page.tsx:96:21)
+  94 |             <CardHeader className="text-center">
+  95 |                 <CardTitle className="text-2xl font-headline">
+> 96 |                     {employee ? `${maskName(employee.name)}님, 안녕하세요!` : mockStore.name}
+     |                     ^
+  97 |                 </CardTitle>
+  98 |                 <p className="text-muted-foreground pt-1">3월 2주차 근무 가능 시간을 입력해주세요.</p>
+  99 |             </CardHeader> {
+  digest: '3337131683'
+}
+ GET /availability 500 in 1050ms
+ GET /favicon.ico 200 in 885ms
+ ⨯ ReferenceError: employee is not defined
+    at AvailabilityForm (src\app\availability\page.tsx:96:21)
+  94 |             <CardHeader className="text-center">
+  95 |                 <CardTitle className="text-2xl font-headline">
+> 96 |                     {employee ? `${maskName(employee.name)}님, 안녕하세요!` : mockStore.name}
+     |                     ^
+  97 |                 </CardTitle>
+  98 |                 <p className="text-muted-foreground pt-1">3월 2주차 근무 가능 시간을 입력해주세요.</p>
+  99 |             </CardHeader> {
+  digest: '3337131683'
+}
+ GET /availability 500 in 322ms
+ GET /favicon.ico 200 in 488ms
+ ⨯ ReferenceError: employee is not defined
+    at AvailabilityForm (src\app\availability\page.tsx:96:21)
+  94 |             <CardHeader className="text-center">
+  95 |                 <CardTitle className="text-2xl font-headline">
+> 96 |                     {employee ? `${maskName(employee.name)}님, 안녕하세요!` : mockStore.name}
+     |                     ^
+  97 |                 </CardTitle>
+  98 |                 <p className="text-muted-foreground pt-1">3월 2주차 근무 가능 시간을 입력해주세요.</p>
+  99 |             </CardHeader> {
+  digest: '3337131683'
+}
+ GET /availability 500 in 291ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 606ms
+ GET /favicon.ico 200 in 583ms
+ ⨯ ReferenceError: employee is not defined
+    at AvailabilityForm (src\app\availability\page.tsx:96:21)
+  94 |             <CardHeader className="text-center">
+  95 |                 <CardTitle className="text-2xl font-headline">
+> 96 |                     {employee ? `${maskName(employee.name)}님, 안녕하세요!` : mockStore.name}
+     |                     ^
+  97 |                 </CardTitle>
+  98 |                 <p className="text-muted-foreground pt-1">3월 2주차 근무 가능 시간을 입력해주세요.</p>
+  99 |             </CardHeader> {
+  digest: '3337131683'
+}
+ GET /availability 500 in 450ms
+ GET /favicon.ico 200 in 500ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 137ms
+Functions are not valid as a React child. This may happen if you return maskName instead of <maskName /> from render. O
+r maybe you meant to call this function rather than return it.
+ GET /availability 200 in 685ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 589ms
+ GET /avatars/1.png 404 in 1171ms
+ GET /avatars/2.png 404 in 1169ms
+ GET /avatars/4.png 404 in 1165ms
+ GET /avatars/3.png 404 in 1181ms
+ ✓ Compiled in 0ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 218ms
+ GET /avatars/3.png 404 in 1142ms
+ GET /avatars/4.png 404 in 2650ms
+Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of th
+e following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+ ⨯ [TypeError: Cannot read properties of null (reading 'useContext')] {
+  digest: '43902600'
+}
+Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of th
+e following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+[TypeError: Cannot read properties of null (reading 'use')]
+Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of th
+e following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+[TypeError: Cannot read properties of null (reading 'use')]
+ GET /avatars/2.png 404 in 3588ms
+ GET /avatars/1.png 404 in 3622ms
+ GET /availability 500 in 4019ms
+ GET /avatars/1.png 404 in 588ms
+ GET /avatars/2.png 404 in 648ms
+ GET /avatars/3.png 404 in 746ms
+ GET /avatars/4.png 404 in 742ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 443ms
+ GET /avatars/2.png 404 in 1127ms
+ GET /avatars/1.png 404 in 1200ms
+ GET /avatars/4.png 404 in 1187ms
+ GET /avatars/3.png 404 in 1247ms
+ GET /avatars/4.png 404 in 510ms
+ GET /avatars/2.png 404 in 584ms
+ GET /avatars/1.png 404 in 740ms
+ GET /avatars/3.png 404 in 734ms
+Functions are not valid as a React child. This may happen if you return maskName instead of <maskName /> from render. O
+r maybe you meant to call this function rather than return it.
+ GET /availability 200 in 559ms
+ GET /avatars/2.png 404 in 780ms
+ GET /avatars/1.png 404 in 783ms
+ GET /avatars/3.png 404 in 828ms
+ GET /avatars/4.png 404 in 873ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 441ms
+ GET /avatars/1.png 404 in 577ms
+ GET /avatars/2.png 404 in 711ms
+ GET /avatars/3.png 404 in 715ms
+ GET /avatars/4.png 404 in 782ms
+ ✓ Compiled /dashboard in 202ms
+ GET /dashboard 200 in 2024ms
+ GET /avatars/2.png 404 in 1303ms
+ GET /avatars/4.png 404 in 1530ms
+ GET /avatars/3.png 404 in 1568ms
+ GET /avatars/1.png 404 in 1685ms
+ ✓ Compiled /settings in 492ms
+ GET /settings 200 in 900ms
+ GET /reports 200 in 1233ms
+ GET /settings 200 in 490ms
+ GET /avatars/1.png 404 in 660ms
+ GET /avatars/4.png 404 in 871ms
+ GET /avatars/3.png 404 in 933ms
+ GET /avatars/2.png 404 in 943ms
+ GET /availability 200 in 371ms
+ GET /avatars/2.png 404 in 538ms
+ GET /avatars/1.png 404 in 543ms
+ GET /avatars/3.png 404 in 544ms
+ GET /avatars/4.png 404 in 617ms
+ GET /avatars/1.png 404 in 1215ms
+ GET /avatars/4.png 404 in 1305ms
+ GET /avatars/2.png 404 in 1321ms
+ GET /avatars/3.png 404 in 1411ms
+ GET /avatars/1.png 404 in 762ms
+ GET /avatars/3.png 404 in 843ms
+ GET /avatars/4.png 404 in 920ms
+ GET /avatars/2.png 404 in 995ms
+ GET /avatars/4.png 404 in 435ms
+ GET /avatars/1.png 404 in 526ms
+ GET /avatars/2.png 404 in 526ms
+ GET /avatars/3.png 404 in 527ms
+ GET /avatars/3.png 404 in 465ms
+ GET /avatars/2.png 404 in 497ms
+ GET /avatars/4.png 404 in 506ms
+ GET /avatars/1.png 404 in 558ms
+ GET /avatars/2.png 404 in 1910ms
+ GET /avatars/1.png 404 in 2393ms
+ GET /avatars/4.png 404 in 2880ms
+ GET /avatars/3.png 404 in 2921ms
+ GET /avatars/1.png 404 in 823ms
+ GET /avatars/3.png 404 in 937ms
+ GET /avatars/2.png 404 in 1005ms
+ GET /avatars/4.png 404 in 1011ms
+ GET /avatars/4.png 404 in 580ms
+ GET /avatars/1.png 404 in 587ms
+ GET /avatars/2.png 404 in 640ms
+ GET /avatars/3.png 404 in 683ms
+ GET /avatars/3.png 404 in 649ms
+ GET /avatars/4.png 404 in 695ms
+ GET /avatars/2.png 404 in 703ms
+ GET /avatars/1.png 404 in 716ms
+ ✓ Compiled in 96ms
+ ✓ Compiled in 94ms
+ GET /availability 200 in 616ms
+ GET /avatars/3.png 404 in 484ms
+ GET /avatars/2.png 404 in 551ms
+ GET /avatars/1.png 404 in 665ms
+ GET /avatars/4.png 404 in 662ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 469ms
+ GET /avatars/1.png 404 in 512ms
+ GET /avatars/2.png 404 in 608ms
+ GET /avatars/4.png 404 in 603ms
+ GET /avatars/3.png 404 in 650ms
+ GET /avatars/1.png 404 in 423ms
+ GET /avatars/4.png 404 in 575ms
+ GET /avatars/3.png 404 in 576ms
+ GET /avatars/2.png 404 in 578ms
+ GET /dashboard 200 in 1625ms
+ GET /avatars/3.png 404 in 1208ms
+ GET /avatars/2.png 404 in 1598ms
+ GET /avatars/1.png 404 in 1613ms
+ GET /avatars/4.png 404 in 1609ms
+ GET /settings 200 in 1215ms
+ GET /settings 200 in 432ms
+ GET /avatars/1.png 404 in 1192ms
+ GET /avatars/2.png 404 in 1299ms
+ GET /avatars/3.png 404 in 1291ms
+ GET /avatars/4.png 404 in 1290ms
+ GET /availability 200 in 333ms
+ GET /avatars/4.png 404 in 890ms
+ GET /avatars/1.png 404 in 1049ms
+ GET /avatars/2.png 404 in 1187ms
+ GET /avatars/3.png 404 in 1182ms
+ GET /avatars/3.png 404 in 594ms
+ GET /avatars/4.png 404 in 762ms
+ GET /avatars/2.png 404 in 773ms
+ GET /avatars/1.png 404 in 851ms
+ GET /availability 200 in 329ms
+ GET /avatars/2.png 404 in 414ms
+ GET /avatars/4.png 404 in 540ms
+ GET /avatars/3.png 404 in 545ms
+ GET /avatars/1.png 404 in 625ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 429ms
+ GET /avatars/3.png 404 in 414ms
+ GET /avatars/1.png 404 in 474ms
+ GET /avatars/4.png 404 in 577ms
+ GET /avatars/2.png 404 in 581ms
+ GET /avatars/4.png 404 in 445ms
+ GET /avatars/1.png 404 in 596ms
+ GET /avatars/2.png 404 in 595ms
+ GET /avatars/3.png 404 in 650ms
+ GET /dashboard 200 in 2226ms
+ GET /avatars/3.png 404 in 1220ms
+ GET /avatars/1.png 404 in 1403ms
+ GET /avatars/4.png 404 in 1415ms
+ GET /avatars/2.png 404 in 1430ms
+ GET /settings 200 in 1421ms
+ GET /avatars/4.png 404 in 842ms
+ GET /avatars/2.png 404 in 1110ms
+ GET /avatars/3.png 404 in 1099ms
+ GET /avatars/1.png 404 in 1222ms
+ GET /settings 200 in 1083ms
+ GET /availability 200 in 260ms
+ GET /avatars/2.png 404 in 439ms
+ GET /avatars/1.png 404 in 514ms
+ GET /avatars/3.png 404 in 633ms
+ GET /avatars/4.png 404 in 631ms
+ GET /avatars/4.png 404 in 758ms
+ GET /avatars/3.png 404 in 932ms
+ GET /avatars/2.png 404 in 934ms
+ GET /avatars/1.png 404 in 937ms
+ GET /avatars/2.png 404 in 793ms
+ GET /avatars/4.png 404 in 1122ms
+ GET /avatars/1.png 404 in 1143ms
+ GET /avatars/3.png 404 in 1134ms
+ GET /dashboard 200 in 2286ms
+ GET /avatars/4.png 404 in 477ms
+ GET /avatars/1.png 404 in 649ms
+ GET /avatars/2.png 404 in 658ms
+ GET /avatars/3.png 404 in 660ms
+ ✓ Compiled in 115ms
+ ✓ Compiled /reports in 228ms
+ GET /reports 200 in 508ms
+ ✓ Compiled /dashboard in 293ms
+ GET /dashboard 200 in 584ms
+ GET /reports 200 in 347ms
+ GET /dashboard 200 in 353ms
+ GET /reports 200 in 380ms
+ GET /dashboard 200 in 454ms
+ GET /reports 200 in 391ms
+ GET /dashboard 200 in 416ms
+ GET /reports 200 in 349ms
+ GET /dashboard 200 in 343ms
+ GET /reports 200 in 342ms
+ GET /dashboard 200 in 489ms
+ GET /reports 200 in 637ms
+ GET /dashboard 200 in 586ms
+ ✓ Compiled /_not-found/page in 132ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 590ms
+ ✓ Compiled /availability in 328ms
+ GET /availability 200 in 626ms
+ GET /avatars/4.png 404 in 1038ms
+ GET /avatars/3.png 404 in 1336ms
+ GET /avatars/1.png 404 in 1355ms
+ GET /avatars/2.png 404 in 1362ms
+ GET /avatars/2.png 404 in 933ms
+ GET /avatars/3.png 404 in 1027ms
+ GET /avatars/4.png 404 in 1049ms
+ GET /avatars/1.png 404 in 1238ms
+ GET /availability?_rsc=ncetc 200 in 610ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 916ms
+ GET /avatars/2.png 404 in 972ms
+ GET /avatars/1.png 404 in 1220ms
+ GET /avatars/3.png 404 in 1157ms
+ GET /avatars/4.png 404 in 1247ms
+ GET /avatars/1 404 in 270ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 521ms
+ GET /avatars/2 404 in 346ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 681ms
+ GET /avatars/3 404 in 304ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 831ms
+ GET /avatars/4 404 in 572ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 1845ms
+ GET /dashboard 200 in 1670ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 1222ms
+ GET /avatars/1.png 404 in 1109ms
+ GET /avatars/4.png 404 in 1331ms
+ GET /avatars/3.png 404 in 1599ms
+ GET /avatars/2.png 404 in 1607ms
+ GET /availability 200 in 1567ms
+ GET /availability 200 in 378ms
+ GET /availability 200 in 305ms
+ GET /avatars/3.png 404 in 640ms
+ GET /avatars/1.png 404 in 898ms
+ GET /avatars/4.png 404 in 883ms
+ GET /avatars/2.png 404 in 896ms
+ GET /avatars/4.png 404 in 551ms
+ GET /avatars/1.png 404 in 704ms
+ GET /avatars/3.png 404 in 701ms
+ GET /avatars/2.png 404 in 769ms
+ GET /avatars/2.png 404 in 848ms
+ GET /avatars/1.png 404 in 858ms
+ GET /avatars/4.png 404 in 861ms
+ GET /avatars/3.png 404 in 866ms
+ ✓ Compiled in 49ms
+ ✓ Compiled /settings in 164ms
+ GET /settings 200 in 368ms
+ GET /availability 200 in 831ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 550ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 614ms
+ GET /dashboard 200 in 1609ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 897ms
+ GET /settings 200 in 289ms
+ ✓ Compiled in 115ms
+ ✓ Compiled in 111ms
+ ✓ Compiled in 92ms
+ GET /settings 200 in 6014ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 677ms
+ GET /availability 200 in 614ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 349ms
+ GET /availability 200 in 393ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 520ms
+ GET /settings 200 in 600ms
+ GET /availability 200 in 349ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 424ms
+ GET /availability 200 in 364ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 392ms
+ GET /dashboard 200 in 1512ms
+ GET /dashboard 200 in 1299ms
+ GET /favicon.ico?favicon.56766c03.ico 200 in 397ms
+ GET /availability?token=eyJlbXBJZCI6ImVtcC0yIiwiZXhwIjoxNzYzODk1MTM0NjM1LCJub25jZSI6InNzdnVvYyJ9 200 in 350ms
+ GET /availability 200 in 211ms
+ GET /settings 200 in 273ms
+ GET /availability?token=eyJlbXBJZCI6ImVtcC0yIiwiZXhwIjoxNzYzODk1MTM0NjM1LCJub25jZSI6InNzdnVvYyJ9 200 in 309ms
+ GET /dashboard 200 in 370ms
+ GET /availability?token=eyJlbXBJZCI6ImVtcC0yIiwiZXhwIjoxNzYzODk1MzU2NDkzLCJub25jZSI6ImhqY3Zxa 200 in 436ms
+ ✓ Compiled in 243ms
+ ✓ Compiled in 128ms
+ GET /settings 200 in 407ms

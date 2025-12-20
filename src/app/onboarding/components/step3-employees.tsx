@@ -35,7 +35,7 @@ export default function Step3Employees() {
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => append({ name: "", hourlyRate: 9860, role: "직원" })}
+          onClick={() => append({ name: "", hourlyRate: 9860, role: "직원", shiftPreset: "morning" })}
         >
           직원 추가
         </Button>

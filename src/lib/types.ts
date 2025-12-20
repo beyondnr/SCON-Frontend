@@ -18,6 +18,8 @@ export type Store = {
 
 export type EmployeeRole = '직원' | '매니저';
 
+export type ShiftPreset = 'morning' | 'afternoon' | 'custom';
+
 /**
  * [Type Definition]
  * 직원 개인 정보를 나타냅니다.
@@ -25,9 +27,17 @@ export type EmployeeRole = '직원' | '매니저';
 export type Employee = {
   id: string;
   name: string;
+  email: string;
+  phoneNumber: string;
   hourlyRate: number;
   role: EmployeeRole;
   avatarUrl?: string;
+  color?: string;
+  
+  // 기본 근무 시간 설정
+  shiftPreset?: ShiftPreset; // MVP에서는 optional로 시작, 추후 required 권장
+  customShiftStart?: string; // "HH:mm"
+  customShiftEnd?: string;   // "HH:mm"
 };
 
 export type TimeRange = {
@@ -54,8 +64,24 @@ export type Shift = {
 
 /**
  * [Type Definition]
- * 주간 스케줄 구조를 정의합니다.
- * 요일 -> 직원ID -> 근무시간 매핑 구조입니다.
+ * 월간 스케줄 구조를 정의합니다.
+ */
+export type MonthlySchedule = {
+  id: string;
+  yearMonth: string; // "YYYY-MM"
+  schedule: {
+    [date: string]: { // "YYYY-MM-DD"
+      [employeeId: string]: TimeRange | null;
+    };
+  };
+  lastSentAt?: string; // ISO string
+  isModifiedAfterSent: boolean;
+};
+
+/**
+ * [Type Definition]
+ * 주간 스케줄 구조를 정의합니다. (기존 유지, date 키가 'YYYY-MM-DD' 형식이 됨)
+ * 요일/날짜 -> 직원ID -> 근무시간 매핑 구조입니다.
  */
 export type Schedule = {
   [day: string]: {
@@ -77,4 +103,15 @@ export type Payroll = {
   nightPay: number;
   holidayPay: number;
   totalPay: number;
+};
+
+/**
+ * [Type Definition]
+ * 과거 급여 리포트 이력 정보를 나타냅니다.
+ */
+export type ReportHistoryItem = {
+  id: string;
+  period: string;
+  totalHours: number;
+  totalAmount: number;
 };

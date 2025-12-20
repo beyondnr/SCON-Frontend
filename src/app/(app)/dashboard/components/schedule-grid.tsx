@@ -1,91 +1,24 @@
-// File: studio/src/app/(app)/dashboard/components/schedule-grid.tsx
 "use client";
 
-/**
- * [Script Purpose]
- * 직원별 주간 근무표를 그리드(테이블) 형태로 시각화하고 관리하는 컴포넌트입니다.
- * 
- * [Logic & Data Flow]
- * 1. 근무표 렌더링: 직원(행) x 요일(열) 매트릭스 구조로 근무표를 표시합니다.
- * 2. 법규 위반 체크 (Simulation):
- *    - useEffect를 통해 컴포넌트 마운트 시 랜덤하게 특정 근무를 '법규 위반'으로 표시합니다.
- *    - 위반 시 붉은색 하이라이트와 아이콘 애니메이션을 적용합니다.
- * 3. 상호작용 (Interaction):
- *    - 셀 클릭 -> handleShiftClick -> 편집 모달(EditShiftDialog) 오픈
- *    - 모달 저장 -> handleSaveShift -> 로컬 근무표 상태(schedule) 업데이트
- */
-
-import { useState, Fragment, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { mockEmployees, weekDays } from "@/lib/mock-data";
-import { Schedule, TimeRange, Employee } from "@/lib/types";
-import { cn, formatTime } from "@/lib/utils";
-import { EditShiftDialog } from "./edit-shift-dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { mockEmployees } from "@/lib/mock-data";
+import { Employee, TimeRange, MonthlySchedule } from "@/lib/types";
+import { cn, formatTime, isOutsideShiftTime, getShiftWarningMessage } from "@/lib/utils";
 import { Calendar, Clock } from "lucide-react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-/**
- * [Type Definition] ShiftInfo
- * 근무표 수정 시 선택된 셀의 컨텍스트 정보를 담습니다.
- */
-type ShiftInfo = {
-    employee: Employee;
-    day: string;
-    timeRange: TimeRange | null;
-};
+interface ScheduleGridProps {
+    scheduleData: MonthlySchedule['schedule'];
+    dates: Date[];
+    onEditShift?: (employee: Employee, day: string, timeRange: TimeRange | null) => void;
+}
 
-type ViolationState = {
-    [key: string]: boolean;
-};
-
-export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule }) {
-    // [State] 로컬 근무표 데이터 및 UI 상태
-    const [schedule, setSchedule] = useState(initialSchedule);
-    const [editingShift, setEditingShift] = useState<ShiftInfo | null>(null);
-    const [violations, setViolations] = useState<ViolationState>({});
-
-    // [Effect] 컴포넌트 마운트 시 법규 위반 여부 시뮬레이션
-    useEffect(() => {
-        const newViolations: ViolationState = {};
-        mockEmployees.forEach(employee => {
-            weekDays.forEach(day => {
-                // 데모 목적: 특정 직원의 근무표를 랜덤하게 위반으로 표시
-                if (employee.id === 'emp-1' && Math.random() < 0.1) {
-                    newViolations[`${employee.id}-${day}`] = true;
-                }
-            });
-        });
-        setViolations(newViolations);
-    }, []);
-
-
-    /**
-     * [Function] 셀 클릭 핸들러
-     * 클릭된 셀의 정보(직원, 요일, 현재 시간)를 상태에 저장하여 편집 다이얼로그를 엽니다.
-     */
-    const handleShiftClick = (employee: Employee, day: string, timeRange: TimeRange | null) => {
-        setEditingShift({ employee, day, timeRange });
-    };
-
-    /**
-     * [Function] 근무표 저장 핸들러
-     * 다이얼로그에서 '저장' 버튼 클릭 시 호출됩니다.
-     * 불변성을 유지하며 schedule 상태를 업데이트합니다.
-     */
-    const handleSaveShift = (updatedShift: ShiftInfo) => {
-        setSchedule(prevSchedule => {
-            const newSchedule = { ...prevSchedule };
-            if (!newSchedule[updatedShift.day]) {
-                newSchedule[updatedShift.day] = {};
-            }
-            newSchedule[updatedShift.day][updatedShift.employee.id] = updatedShift.timeRange;
-            return newSchedule;
-        });
-        setEditingShift(null);
-    };
-
+export function ScheduleGrid({ scheduleData, dates, onEditShift }: ScheduleGridProps) {
     return (
-        <>
+        <TooltipProvider>
             <Card className="shadow-md">
                 <CardHeader className="border-b bg-muted/30 pb-4">
                     <div className="flex items-center gap-2">
@@ -96,22 +29,34 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
                 <CardContent className="p-0 overflow-x-auto">
                     <div className="min-w-[800px]">
                         {/* CSS Grid를 활용한 테이블 레이아웃 */}
-                        <div className="grid gap-[1px] bg-border/50" style={{ gridTemplateColumns: `160px repeat(${weekDays.length}, minmax(110px, 1fr))` }}>
+                        <div className="grid gap-[1px] bg-border/50" style={{ gridTemplateColumns: `160px repeat(${dates.length}, minmax(110px, 1fr))` }}>
                             
-                            {/* [Header Row] 요일 헤더 */}
-                            <div className="bg-muted/50 p-4 font-semibold text-sm text-muted-foreground sticky left-0 z-20 border-b flex items-center justify-center">직원 / 요일</div>
-                            {weekDays.map(day => (
-                                <div key={day} className="bg-muted/30 p-4 font-semibold text-sm text-center text-foreground border-b">{day}</div>
-                            ))}
+                            {/* [Header Row] 날짜 헤더 */}
+                            <div className="bg-muted/50 p-4 font-semibold text-sm text-muted-foreground sticky left-0 z-20 border-b flex items-center justify-center">직원 / 날짜</div>
+                            {dates.map(date => {
+                                const dateKey = format(date, 'yyyy-MM-dd');
+                                const isSunday = date.getDay() === 0;
+                                const isSaturday = date.getDay() === 6;
+                                
+                                return (
+                                    <div key={dateKey} className={`bg-muted/30 p-4 font-semibold text-sm text-center border-b ${
+                                        isSunday ? 'text-red-500' : isSaturday ? 'text-blue-500' : 'text-foreground'
+                                    }`}>
+                                        {format(date, 'M/d (eee)', { locale: ko })}
+                                    </div>
+                                );
+                            })}
 
                             {/* [Body Rows] 직원별 근무표 행 */}
                             {mockEmployees.map(employee => (
-                                <Fragment key={employee.id}>
+                                <div key={employee.id} className="contents">
                                     {/* 직원 정보 컬럼 (Sticky) */}
                                     <div className="bg-background p-4 text-sm font-medium sticky left-0 z-10 border-r shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] flex items-center gap-3">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src={employee.avatarUrl} alt={employee.name} className="object-cover" />
-                                            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
+                                        <Avatar className="h-8 w-8 border-2 border-transparent" style={{ borderColor: employee.color }}>
+                                            <AvatarFallback 
+                                                className="font-bold text-xs"
+                                                style={{ backgroundColor: employee.color ? `${employee.color}30` : undefined, color: employee.color }}
+                                            >
                                                 {employee.name[0]}
                                             </AvatarFallback>
                                         </Avatar>
@@ -121,32 +66,48 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
                                         </div>
                                     </div>
                                     
-                                    {/* 요일별 근무 시간 셀 */}
-                                    {weekDays.map(day => {
-                                        const timeRange = schedule[day]?.[employee.id];
-                                        const isViolation = violations[`${employee.id}-${day}`];
+                                    {/* 날짜별 근무 시간 셀 */}
+                                    {dates.map(date => {
+                                        const dateKey = format(date, 'yyyy-MM-dd');
+                                        const timeRange = scheduleData[dateKey]?.[employee.id];
+                                        const isViolation = isOutsideShiftTime(employee, timeRange || null);
+
                                         return (
                                             <div
-                                                key={`${employee.id}-${day}`}
+                                                key={`${employee.id}-${dateKey}`}
                                                 className={cn(
                                                     "relative p-3 min-h-[80px] flex flex-col items-center justify-center text-xs cursor-pointer transition-all duration-200 group border-b last:border-b-0",
                                                     "hover:bg-accent/50 hover:shadow-inner",
                                                     isViolation ? "bg-destructive/5 hover:bg-destructive/10" : "bg-background"
                                                 )}
-                                                onClick={() => handleShiftClick(employee, day, timeRange || null)}
+                                                onClick={() => onEditShift?.(employee, dateKey, timeRange || null)}
                                             >
-                                                {/* 위반 시 표시되는 인디케이터 */}
+                                                {/* 위반 시 표시되는 인디케이터 (Tooltip 적용) */}
                                                 {isViolation && (
-                                                    <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive animate-pulse" title="법규 위반 경고" />
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive animate-pulse" />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p className="text-destructive font-medium">⚠️ {getShiftWarningMessage(employee)}</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
                                                 )}
                                                 
                                                 {timeRange ? (
-                                                    <div className={cn(
-                                                        "rounded-md px-3 py-1.5 font-medium shadow-sm border flex items-center gap-1.5 w-full justify-center",
-                                                        isViolation 
-                                                            ? "bg-white border-destructive/30 text-destructive" 
-                                                            : "bg-primary/5 border-primary/20 text-primary group-hover:bg-primary/10 group-hover:border-primary/30"
-                                                    )}>
+                                                    <div 
+                                                        className={cn(
+                                                            "rounded-md px-3 py-1.5 font-medium shadow-sm border flex items-center gap-1.5 w-full justify-center",
+                                                            isViolation 
+                                                                ? "bg-white border-destructive/30 text-destructive" 
+                                                                : "bg-primary/5 border-primary/20 text-primary group-hover:bg-primary/10 group-hover:border-primary/30"
+                                                        )}
+                                                        style={!isViolation && employee.color ? {
+                                                            backgroundColor: `${employee.color}20`,
+                                                            borderColor: `${employee.color}40`,
+                                                            color: employee.color
+                                                        } : undefined}
+                                                    >
                                                         <Clock className="h-3 w-3 opacity-70" />
                                                         <span>{formatTime(timeRange.start)} - {formatTime(timeRange.end)}</span>
                                                     </div>
@@ -156,20 +117,12 @@ export function ScheduleGrid({ schedule: initialSchedule }: { schedule: Schedule
                                             </div>
                                         );
                                     })}
-                                </Fragment>
+                                </div>
                             ))}
                         </div>
                     </div>
                 </CardContent>
             </Card>
-
-            {/* 근무표 편집 모달 */}
-            <EditShiftDialog
-                isOpen={!!editingShift}
-                onClose={() => setEditingShift(null)}
-                shiftInfo={editingShift}
-                onSave={handleSaveShift}
-            />
-        </>
+        </TooltipProvider>
     );
 }

@@ -29,17 +29,32 @@ graph TD
     
     AppLayout --> DashboardPage["DashboardPage<br/>dashboard/page.tsx"]
     AppLayout --> ReportsPage["ReportsPage<br/>reports/page.tsx"]
+    AppLayout --> SettingsPage["SettingsPage<br/>settings/page.tsx"]
 
-    %% Dashboard Components
+    %% Dashboard Components (Monthly Schedule)
+    DashboardPage --> MonthNavigator["MonthNavigator"]
+    DashboardPage --> WeekTabs["WeekTabs"]
     DashboardPage --> SummaryCards["SummaryCards"]
-    DashboardPage --> ApproveButton["ApproveButton"]
+    DashboardPage --> ViewToggle["ViewToggle<br/>(시간대별/직원별)"]
+    DashboardPage --> TimeScheduleTable["TimeScheduleTable"]
     DashboardPage --> ScheduleGrid["ScheduleGrid"]
+    DashboardPage --> SendScheduleButton["SendScheduleButton"]
+    
+    %% Dashboard Dialogs
+    DashboardPage --> EditShiftDialog["EditShiftDialog"]
+    DashboardPage --> CopyWeekPatternDialog["CopyWeekPatternDialog"]
+    DashboardPage --> SendScheduleDialog["SendScheduleDialog"]
+    SendScheduleDialog --> MonthlyCalendarView["MonthlyCalendarView"]
     
     %% Reports Components
     ReportsPage --> ReportActions["ReportActions"]
     ReportsPage --> PayrollTable["PayrollTable"]
     PayrollTable --> CollapsibleRow["Collapsible Row"]
     CollapsibleRow --> DailyDetail["Daily Detail Grid"]
+
+    %% Settings Components
+    SettingsPage --> EmployeeEditDialog["EmployeeEditDialog"]
+    EmployeeEditDialog --> ShiftPresetSelector["ShiftPresetSelector<br/>(오전조/오후조/커스텀)"]
 ```
 
 ## 3. 구조 및 효율성 분석
@@ -57,22 +72,40 @@ graph TD
 *   **Onboarding (Context API)**:
     *   `OnboardingProvider`를 사용하여 다단계 폼(Wizard)의 데이터를 전역적으로 관리합니다. 이는 단계 간 데이터 지속성을 보장하고 prop drilling을 방지하는 효율적인 패턴입니다.
 *   **Dashboard (Local State)**:
-    *   `useState`를 사용하여 데이터와 로딩 상태를 관리합니다. 현재는 Mock 데이터를 사용하므로 적절하지만, 실제 API 연동 시 데이터 동기화 복잡도가 증가할 수 있습니다.
+    *   `useState`를 사용하여 월간 근무표 데이터, 현재 선택된 월/주차, 로딩 상태를 관리합니다. 현재는 Mock 데이터를 사용하므로 적절하지만, 실제 API 연동 시 데이터 동기화 복잡도가 증가할 수 있습니다.
 
 ### 3.3 렌더링 전략 (Server vs Client)
 *   **Client Component 활용**:
     *   `DashboardPage`, `OnboardingPage`, `PayrollTable` 등 인터랙션이 많은 컴포넌트는 `"use client"`를 명시하여 Client Side Rendering을 수행합니다.
     *   `ReportsPage`와 같은 상위 페이지는 기본 Server Component로 동작하려 하나, 하위 컴포넌트의 의존성에 따라 결정됩니다. 현재 구조는 인터랙션이 필요한 잎새(Leaf) 노드 위주로 Client Component로 전환하는 Next.js 권장 패턴을 잘 따르고 있습니다.
 
-## 4. 개선 가능성 및 제안
+## 4. 신규 컴포넌트 (MVP 구현 예정)
 
-### 4.1 단기 개선 사항 (Refactoring)
+### 4.1 월간 근무표 관련
+| 컴포넌트 | 역할 |
+|----------|------|
+| `MonthNavigator` | ◀ 이전월 / 다음월 ▶ 네비게이션 |
+| `WeekTabs` | 1주차~5주차 탭 전환 |
+| `CopyWeekPatternDialog` | 1주차 패턴을 다른 주차에 복사하는 모달 |
+| `SendScheduleDialog` | 이메일 발송 전 월 전체 캘린더 미리보기 모달 |
+| `MonthlyCalendarView` | 월 전체 캘린더 뷰 (직원 이름 + 호버 시 시간 툴팁) |
+
+### 4.2 직원 관리 관련
+| 컴포넌트 | 역할 |
+|----------|------|
+| `ShiftPresetSelector` | 오전조/오후조/커스텀 근무 시간 선택 UI |
+
+## 5. 개선 가능성 및 제안
+
+### 5.1 단기 개선 사항 (Refactoring)
 1.  **데이터 Fetching 추상화**:
     *   현재 `DashboardPage` 내부에 `setTimeout`으로 하드코딩된 데이터 로딩 로직이 있습니다. 이를 Custom Hook(예: `useScheduleData`)으로 분리하면 UI와 데이터 로직을 분리하여 가독성을 높일 수 있습니다.
 2.  **매직 넘버/스트링 제거**:
     *   `mock-data.ts`에 정의된 데이터 외에, 컴포넌트 내부에 하드코딩된 라벨이나 설정값들을 상수 파일(`constants.ts`)로 분리하는 것을 권장합니다.
+3.  **경고 표시 로직 분리**:
+    *   기본 근무 시간 외 배치 경고 로직을 `lib/utils.ts`에 유틸 함수로 분리하여 여러 컴포넌트에서 일관되게 사용합니다.
 
-### 4.2 장기 아키텍처 제안 (Scalability)
+### 5.2 장기 아키텍처 제안 (Scalability)
 1.  **서버 상태 관리 도입**:
     *   Firebase 연동 시 `React Query` (TanStack Query) 도입을 고려해야 합니다. 현재의 `useState` + `useEffect` 패턴은 캐싱, 재시도, 백그라운드 동기화 등을 직접 구현해야 하므로 비효율적일 수 있습니다.
 2.  **Server Actions 활용**:
@@ -80,6 +113,5 @@ graph TD
 3.  **Compound Component 패턴 적용**:
     *   `PayrollTable`이 다소 복잡해지고 있습니다. 테이블 행, 확장 영역 등을 Compound Component 패턴으로 분리하면 유지보수성이 향상될 것입니다.
 
-## 5. 결론
-현재 `studio` 프로젝트는 **Next.js의 App Router 구조를 충실히 따르고 있으며, 컴포넌트의 역할 분리가 명확**합니다. 특히 Shadcn UI를 활용한 일관된 디자인 시스템과 Context API를 적절히 활용한 폼 관리는 초기 프로토타입 이상의 견고함을 보여줍니다. 향후 실제 백엔드 연동 시 데이터 레이어(Data Fetching)만 잘 추상화한다면 확장성 높은 애플리케이션이 될 것입니다.
-
+## 6. 결론
+현재 `studio` 프로젝트는 **Next.js의 App Router 구조를 충실히 따르고 있으며, 컴포넌트의 역할 분리가 명확**합니다. 특히 Shadcn UI를 활용한 일관된 디자인 시스템과 Context API를 적절히 활용한 폼 관리는 초기 프로토타입 이상의 견고함을 보여줍니다. 월간 근무표 관리 기능 추가 시 주 단위 탭 분할과 캘린더 미리보기 등 새로운 컴포넌트들이 도입되며, 기존 구조를 확장하는 방식으로 개발이 진행될 예정입니다.

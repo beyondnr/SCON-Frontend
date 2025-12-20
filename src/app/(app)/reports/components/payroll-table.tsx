@@ -39,13 +39,14 @@ export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
             <Table>
                 <TableHeader>
                     <TableRow>
-                    <TableHead className="w-[120px]"></TableHead>
-                    <TableHead>직원</TableHead>
-                    <TableHead className="text-right">총 근무시간</TableHead>
-                    <TableHead className="text-right">기본급</TableHead>
-                    <TableHead className="text-right">주휴수당</TableHead>
-                    <TableHead className="text-right">연장/야간/휴일</TableHead>
-                    <TableHead className="text-right font-bold">총 지급액</TableHead>
+                    <TableHead className="whitespace-nowrap">직원</TableHead>
+                    <TableHead className="text-right whitespace-nowrap">총 근무시간</TableHead>
+                    <TableHead className="text-right whitespace-nowrap">시급</TableHead>
+                    <TableHead className="text-right whitespace-nowrap">기본급</TableHead>
+                    <TableHead className="text-right whitespace-nowrap">주휴수당</TableHead>
+                    <TableHead className="text-right whitespace-nowrap">연장/야간/휴일</TableHead>
+                    <TableHead className="text-right font-bold whitespace-nowrap">총 지급액</TableHead>
+                    <TableHead className="w-[100px] text-center whitespace-nowrap">상세</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -58,30 +59,30 @@ export function PayrollTable({ payrolls }: { payrolls: Payroll[] }) {
                     return (
                         <Collapsible key={payroll.employeeId} asChild>
                             <React.Fragment>
-                                <TableRow className="font-medium">
-                                    <TableCell>
-                                        <CollapsibleTrigger asChild>
-                                            <Button variant="ghost" size="sm" className="w-full justify-start">
-                                                상세
-                                                <ChevronDown className="h-4 w-4 ml-2" />
-                                            </Button>
-                                        </CollapsibleTrigger>
-                                    </TableCell>
-                                    <TableCell>{employee.name}</TableCell>
-                                    <TableCell className="text-right">{payroll.totalHours}시간</TableCell>
-                                    <TableCell className="text-right">{formatCurrency(payroll.basePay)}원</TableCell>
-                                    <TableCell className="text-right">{formatCurrency(payroll.weeklyHolidayAllowance)}원</TableCell>
-                                    <TableCell className="text-right">{formatCurrency(specialPay)}원</TableCell>
-                                    <TableCell className="text-right font-bold">
+                                <TableRow className="font-medium text-base">
+                                    <TableCell className="whitespace-nowrap">{employee.name}</TableCell>
+                                    <TableCell className="text-right whitespace-nowrap">{payroll.totalHours}시간</TableCell>
+                                    <TableCell className="text-right text-muted-foreground whitespace-nowrap">{formatCurrency(employee.hourlyRate)}원</TableCell>
+                                    <TableCell className="text-right whitespace-nowrap">{formatCurrency(payroll.basePay)}원</TableCell>
+                                    <TableCell className="text-right whitespace-nowrap">{formatCurrency(payroll.weeklyHolidayAllowance)}원</TableCell>
+                                    <TableCell className="text-right whitespace-nowrap">{formatCurrency(specialPay)}원</TableCell>
+                                    <TableCell className="text-right font-bold whitespace-nowrap">
                                         <div className="flex justify-end items-center gap-2">
                                             {formatCurrency(payroll.totalPay)}원
                                             {isIncreased && <TrendingUp className="h-4 w-4 text-green-500" />}
                                         </div>
                                     </TableCell>
+                                    <TableCell className="text-center">
+                                        <CollapsibleTrigger asChild>
+                                            <Button variant="ghost" size="sm">
+                                                보기 <ChevronDown className="h-4 w-4 ml-1" />
+                                            </Button>
+                                        </CollapsibleTrigger>
+                                    </TableCell>
                                 </TableRow>
                                 <CollapsibleContent asChild>
                                     <TableRow>
-                                        <TableCell colSpan={7} className="p-0">
+                                        <TableCell colSpan={8} className="p-0">
                                             <div className="p-4 bg-muted/50">
                                                 <h4 className="font-semibold mb-2">{employee.name}님 일별 근무 기록</h4>
                                                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">

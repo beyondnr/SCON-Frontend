@@ -1,30 +1,30 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { mockEmployees, weekDays } from "@/lib/mock-data";
-import { Schedule } from "@/lib/types";
-import { Clock } from "lucide-react";
+import { mockEmployees } from "@/lib/mock-data";
+import { Employee, TimeRange, MonthlySchedule } from "@/lib/types";
+import { Clock, AlertTriangle } from "lucide-react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { parseMinutes, isOutsideShiftTime, getShiftWarningMessage } from "@/lib/utils";
 
 interface TimeScheduleTableProps {
-  schedule: Schedule;
+  scheduleData: MonthlySchedule['schedule'];
+  dates: Date[];
+  onEditShift?: (employee: Employee, day: string, timeRange: TimeRange | null) => void;
+  onAddShift?: (day: string, time: string) => void;
 }
 
-export function TimeScheduleTable({ schedule }: TimeScheduleTableProps) {
+export function TimeScheduleTable({ scheduleData, dates, onEditShift, onAddShift }: TimeScheduleTableProps) {
   // 09:00 ~ 22:00 (1시간 단위)
   const hours = Array.from({ length: 14 }, (_, i) => i + 9);
-
-  // 시간 문자열(HH:mm)을 분 단위 정수로 변환
-  const parseMinutes = (timeStr: string) => {
-    const [h, m] = timeStr.split(":").map(Number);
-    return h * 60 + m;
-  };
 
   // 해당 슬롯(1시간) 내의 근무 시간(분) 계산 및 텍스트 반환
   const getWorkingDurationText = (slotHour: number, startStr: string, endStr: string) => {
@@ -65,25 +65,33 @@ export function TimeScheduleTable({ schedule }: TimeScheduleTableProps) {
         </CardHeader>
         <CardContent className="p-0 overflow-x-auto">
           <div className="min-w-[800px]">
-            {/* Grid Layout: Time Column + 7 Days */}
+            {/* Grid Layout: Time Column + Dates */}
             <div
               className="grid gap-[1px] bg-border/50"
               style={{
-                gridTemplateColumns: `80px repeat(${weekDays.length}, minmax(120px, 1fr))`,
+                gridTemplateColumns: `80px repeat(${dates.length}, minmax(120px, 1fr))`,
               }}
             >
               {/* Header Row */}
               <div className="bg-muted/50 p-4 font-semibold text-sm text-muted-foreground sticky top-0 z-20 border-b flex items-center justify-center">
                 시간
               </div>
-              {weekDays.map((day) => (
-                <div
-                  key={day}
-                  className="bg-muted/30 p-4 font-semibold text-sm text-center text-foreground border-b sticky top-0 z-20"
-                >
-                  {day}
-                </div>
-              ))}
+              {dates.map((date) => {
+                const dateKey = format(date, 'yyyy-MM-dd');
+                const isSunday = date.getDay() === 0;
+                const isSaturday = date.getDay() === 6;
+                
+                return (
+                  <div
+                    key={dateKey}
+                    className={`bg-muted/30 p-4 font-semibold text-sm text-center border-b sticky top-0 z-20 ${
+                      isSunday ? 'text-red-500' : isSaturday ? 'text-blue-500' : 'text-foreground'
+                    }`}
+                  >
+                    {format(date, 'M/d (eee)', { locale: ko })}
+                  </div>
+                );
+              })}
 
               {/* Body Rows: Hours */}
               {hours.map((hour) => (
@@ -93,22 +101,26 @@ export function TimeScheduleTable({ schedule }: TimeScheduleTableProps) {
                     {`${hour.toString().padStart(2, "0")}:00`}
                   </div>
 
-                  {/* Days Columns */}
-                  {weekDays.map((day) => {
+                  {/* Dates Columns */}
+                  {dates.map((date) => {
+                    const dateKey = format(date, 'yyyy-MM-dd');
+                    const dailySchedule = scheduleData[dateKey] || {};
+
                     // Find employees working at this hour on this day
                     const workingEmployees = mockEmployees.filter((emp) => {
-                      const timeRange = schedule[day]?.[emp.id];
+                      const timeRange = dailySchedule[emp.id];
                       if (!timeRange) return false;
                       return isWorking(hour, timeRange.start, timeRange.end);
                     });
 
                     return (
                       <div
-                        key={`${day}-${hour}`}
-                        className="bg-background p-2 border-b border-r last:border-r-0 flex flex-wrap gap-1 content-start min-h-[60px]"
+                        key={`${dateKey}-${hour}`}
+                        className="bg-background p-2 border-b border-r last:border-r-0 flex flex-wrap gap-1 content-start min-h-[60px] hover:bg-accent/20 cursor-pointer transition-colors"
+                        onClick={() => onAddShift?.(dateKey, `${hour.toString().padStart(2, "0")}:00`)}
                       >
                         {workingEmployees.map((emp) => {
-                          const timeRange = schedule[day]?.[emp.id];
+                          const timeRange = dailySchedule[emp.id];
                           const durationText = timeRange
                             ? getWorkingDurationText(
                                 hour,
@@ -116,14 +128,35 @@ export function TimeScheduleTable({ schedule }: TimeScheduleTableProps) {
                                 timeRange.end
                               )
                             : "";
+                          
+                          // Check for shift warning
+                          const hasWarning = isOutsideShiftTime(emp, timeRange);
 
                           return (
                             <Tooltip key={emp.id}>
                               <TooltipTrigger asChild>
-                                <div className="flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full whitespace-nowrap border border-primary/20 cursor-default hover:bg-primary/20 transition-colors">
+                                <div 
+                                  className="flex items-center gap-1 text-xs px-2 py-1 rounded-full whitespace-nowrap border cursor-pointer transition-colors relative group"
+                                  style={{
+                                    backgroundColor: emp.color ? `${emp.color}20` : undefined,
+                                    borderColor: hasWarning ? '#ef4444' : (emp.color ? `${emp.color}40` : undefined),
+                                    color: emp.color || undefined,
+                                  }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onEditShift?.(emp, dateKey, timeRange || null);
+                                  }}
+                                >
+                                  {hasWarning && (
+                                    <div className="absolute -top-1 -right-1 bg-white rounded-full">
+                                        <AlertTriangle className="h-3 w-3 text-destructive animate-pulse" />
+                                    </div>
+                                  )}
                                   <Avatar className="h-4 w-4 shrink-0">
-                                    <AvatarImage src={emp.avatarUrl} alt={emp.name} className="object-cover" />
-                                    <AvatarFallback className="bg-primary/20 text-[8px] flex items-center justify-center w-full h-full">
+                                    <AvatarFallback 
+                                      className="text-[8px] flex items-center justify-center w-full h-full"
+                                      style={{ backgroundColor: emp.color ? `${emp.color}40` : undefined }}
+                                    >
                                       {emp.name[0]}
                                     </AvatarFallback>
                                   </Avatar>
@@ -133,7 +166,13 @@ export function TimeScheduleTable({ schedule }: TimeScheduleTableProps) {
                                 </div>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>{durationText} 근무</p>
+                                <p className="font-bold">{emp.name}</p>
+                                <p>{durationText} 근무 ({timeRange?.start}~{timeRange?.end})</p>
+                                {hasWarning && (
+                                    <p className="text-destructive text-xs mt-1 font-medium">
+                                        ⚠️ {getShiftWarningMessage(emp)}
+                                    </p>
+                                )}
                               </TooltipContent>
                             </Tooltip>
                           );

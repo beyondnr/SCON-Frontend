@@ -1,0 +1,65 @@
+---
+description: Reference guide for common errors encountered in Next.js, Firebase, and TypeScript projects with quick solutions.
+globs: 
+alwaysApply: false
+---
+Globs: /**/*
+
+# COMMON ERRORS REFERENCE
+
+## Next.js Errors
+
+### Hydration Mismatch
+- **Cause**: Server/client HTML mismatch (e.g., `Date.now()`, browser-only APIs).
+- **Fix**: Use `useEffect` or dynamic import with `ssr: false`.
+
+### "use client" Missing
+- **Cause**: Using hooks (`useState`, `useEffect`) in Server Component.
+- **Fix**: Add `"use client"` directive at file top.
+
+### Dynamic Route Params
+- **Cause**: Accessing `params` directly instead of awaiting in async components.
+- **Fix**: `const { id } = await params;` in Next.js 15+.
+
+## Firebase Errors
+
+### Permission Denied (Firestore)
+- **Cause**: Firestore security rules blocking access.
+- **Fix**: Check auth state and update Firestore rules accordingly.
+
+### Auth State Not Persisted
+- **Cause**: Missing `onAuthStateChanged` listener on app init.
+- **Fix**: Set up auth observer in layout or context provider.
+
+## TypeScript Errors
+
+### Type 'X' is not assignable to type 'Y'
+- **Cause**: Incompatible types passed to function or component.
+- **Fix**: Verify Zod schema matches expected types; use type assertion if certain.
+
+### Cannot find module '@/...'
+- **Cause**: Path alias misconfiguration.
+- **Fix**: Check `tsconfig.json` paths and `baseUrl` settings.
+
+## React Errors
+
+### Invalid Hook Call
+- **Cause**: Hook called outside component or conditionally.
+- **Fix**: Ensure hooks are at top level of function component.
+
+### Maximum Update Depth Exceeded
+- **Cause**: Infinite re-render loop in `useEffect` dependencies.
+- **Fix**: Review and correct dependency array; use `useCallback`/`useMemo`.
+
+## Network & API Errors
+
+### CORS Policy Blocked
+- **Cause**: Frontend and backend on different origins without proper CORS headers.
+- **Fix**: Set up proxy in `vite.config.ts` or `next.config.js` to forward `/api` to backend (e.g., Spring Boot on port 8080). Configure proxy before development to prevent CORS issues proactively.
+
+### Backend 4xx/5xx Errors
+- **Cause**: Server returns error responses (400 Bad Request, 500 Internal Server Error).
+- **Fix**: Implement defensive error handling with Error Boundary and Toast notifications. Wrap API calls in try-catch and display user-friendly messages via Toast UI.
+
+## See also
+- [100-error-fixing-process.mdc](100-error-fixing-process.mdc): Structured error diagnosis workflow

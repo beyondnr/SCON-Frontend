@@ -1,0 +1,30 @@
+---
+description: 프로젝트의 기술 스택 정의
+globs: 
+alwaysApply: true
+---
+# Technical Stack
+Referenced in: [001-project-overview.mdc](001-project-overview.mdc)
+
+## Framework & Language
+- Framework: Next.js 15 (App Router)
+- Language: TypeScript
+- Styling: Tailwind CSS, tailwind-merge, clsx
+
+## UI Components
+- Library: Radix UI
+- Pattern: Shadcn UI
+- Icons: Lucide React
+- Charts: Recharts
+
+## Backend & Auth
+- Platform: Firebase v11
+- Auth: Firebase Auth
+- Database: Firestore
+- Validation: Zod + React Hook Form
+
+## AI & External
+- SDK: Genkit (Google AI SDK)
+
+## See also:
+- [003-development-guidelines.mdc](003-development-guidelines.mdc)

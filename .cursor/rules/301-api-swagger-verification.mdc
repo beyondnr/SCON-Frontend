@@ -1,0 +1,74 @@
+---
+description: Mandatory Swagger documentation verification and test calls before API implementation
+globs: src/**/{actions,api,services}/**/*.ts
+alwaysApply: false
+---
+# API Swagger Verification Rules
+
+## Core Philosophy
+- **Swagger First**: Always check the Swagger page for endpoint specs before writing API integration code.
+- **Test Before Code**: Perform test calls via Swagger UI to validate request/response formats before implementation.
+- **Document Driven**: Swagger documentation is the Single Source of Truth. Code must follow the docs.
+
+## Mandatory Process
+
+### Step 1: Review Swagger Documentation
+- Locate the target API endpoint on the Swagger page.
+- Must verify the following:
+  - **HTTP Method & Path**: `GET`, `POST`, `PUT`, `DELETE` and exact route
+  - **Request Body Schema**: Required/optional fields, data types, nested structures
+  - **Query/Path Parameters**: Parameter names, types, required status
+  - **Response Schema**: Success (2xx) and error (4xx, 5xx) response formats
+  - **Authentication**: Required auth headers (Bearer Token, etc.)
+
+### Step 2: Swagger UI Test Call
+- Use Swagger's "Try it out" feature to perform actual test calls.
+- Validation checklist:
+  - Is the request sent successfully?
+  - Does the status code match expectations?
+  - Does the response body structure match the documentation?
+- Define Zod schemas based on test results.
+
+### Step 3: Code Implementation
+- Define types/schemas based on verified Swagger specs.
+- Reflect the request format used in test calls into the code.
+
+## Implementation Example
+
+```typescript
+// 1. Define Zod schema based on Swagger response
+import { z } from 'zod';
+
+// Reflect the exact response structure from Swagger
+const UserResponseSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  name: z.string(),
+  createdAt: z.string().datetime(),
+});
+
+// 2. API call function
+export async function fetchUser(userId: string) {
+  // Apply endpoint and auth method verified from Swagger
+  const response = await fetch(`/api/users/${userId}`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  
+  const data = await response.json();
+  return UserResponseSchema.parse(data); // Schema validation
+}
+```
+
+## Checklist (Before Implementation)
+- [ ] Found the API endpoint on Swagger page?
+- [ ] Verified Request Body/Query Params specs?
+- [ ] Verified Response schema (success/error)?
+- [ ] Performed test call via Swagger UI?
+- [ ] Test results match the documentation?
+- [ ] Defined Zod schema based on verified specs?
+
+## Anti-Patterns (Prohibited)
+- ❌ Writing API request format based on guesswork without checking Swagger
+- ❌ Implementing production code without test calls
+- ❌ Ignoring error response schemas
+- ❌ Handling responses with `any` type

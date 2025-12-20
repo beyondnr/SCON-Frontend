@@ -1,0 +1,72 @@
+---
+description: Guidelines for building extensible code to prevent late refactoring when scaling features from A to B, C, D...
+globs: 
+alwaysApply: false
+---
+Globs: /**/*
+
+# EXTENSIBILITY & SCALABILITY GUIDELINES
+
+## Purpose
+Prevent costly late-stage refactoring when expanding from Feature A to Features B, C, D, E...
+Apply these principles BEFORE completing Feature A to ensure smooth scaling.
+
+## 1. Interface-First Design
+- **Define contracts early**: Create types/interfaces before implementation.
+- **Generic over specific**: Design APIs that can handle future variations.
+- **Example**: Instead of `getUserById()`, consider `getEntityById<T>(type, id)`.
+
+## 2. Configuration over Hardcoding
+- **Extract magic values**: Move literals to constants or config files.
+- **Feature flags**: Use environment variables or config for toggleable features.
+- **Route/path centralization**: Define all routes in a single `routes.ts` file.
+
+## 3. Composition over Inheritance
+- **Small, focused components**: Each component does ONE thing well.
+- **Slot/children patterns**: Use composition to allow content injection.
+- **Custom hooks extraction**: Extract reusable logic into hooks early.
+
+## 4. Data Layer Abstraction
+- **Repository pattern**: Abstract data fetching behind a service layer.
+- **Adapter pattern**: Wrap external APIs to allow easy replacement.
+- **Schema-first**: Define Zod schemas as single source of truth for data shapes.
+
+## 5. Naming for Scale
+- **Semantic naming**: Use names that describe purpose, not implementation.
+- **Avoid feature-specific prefixes**: `useDataFetch` > `useUserFetch` (if reusable).
+- **Consistent conventions**: Establish and document naming patterns early.
+
+## 6. Folder Structure for Growth
+- **Feature-based organization**: Group by domain, not by file type.
+- **Shared vs. feature-specific**: Clear separation between shared utilities and feature code.
+- **Index exports**: Use barrel files (`index.ts`) for clean imports.
+
+## 7. Error & Loading State Patterns
+- **Standardize early**: Define consistent patterns for loading, error, empty states.
+- **Reusable wrappers**: Create `<AsyncBoundary>` or similar components once.
+- **Centralized error handling**: Establish error handling strategy before Feature B.
+
+## 8. Testing Foundation
+- **Test utilities first**: Build test helpers and mocks before scaling.
+- **Integration test patterns**: Define how features should be tested together.
+- **Mock data factories**: Create reusable factories for test data generation.
+
+## Pre-Feature-B Checklist
+Before starting Feature B, verify Feature A has:
+- [ ] Clearly defined interfaces/types that could extend to B
+- [ ] No hardcoded values that B would need to change
+- [ ] Reusable components extracted to shared location
+- [ ] Data layer abstracted (not directly calling APIs in components)
+- [ ] Consistent error/loading patterns established
+- [ ] Folder structure that accommodates new features
+
+## Anti-Patterns to Avoid
+- ❌ Copy-pasting Feature A code to start Feature B
+- ❌ Feature-specific logic in shared components
+- ❌ Tight coupling between features
+- ❌ Inline styles or magic numbers
+- ❌ Direct API calls in UI components
+
+## See also
+- [202-feature-structure.mdc](202-feature-structure.mdc): Folder structure guidelines
+- [203-zod-schema-validation.mdc](203-zod-schema-validation.mdc): Schema-first data modeling

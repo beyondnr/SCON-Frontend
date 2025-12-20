@@ -1,0 +1,50 @@
+---
+description: Zod를 활용한 데이터 모델링 및 검증 패턴
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+# Data Modeling & Validation with Zod
+
+## Principles
+- **Schema First**: Define data structures using Zod schemas first.
+- **Single Source of Truth**: Infer TypeScript types from Zod schemas. NEVER write separate interfaces that duplicate schemas.
+
+## Validation Rules
+
+### 1. Server Actions & API Routes
+- ALWAYS validate input data using `.parse()` or `.safeParse()` at the beginning of the function.
+- Return standardized error objects for validation failures.
+
+### 2. React Hook Form
+- Use `zodResolver` to connect forms with Zod schemas.
+
+### 3. Firestore Data
+- Validate data BEFORE writing to Firestore.
+- Ideally, use a converter or wrapper function that validates data ON READ from Firestore to ensure runtime type safety.
+
+## Code Pattern Example
+
+```typescript
+// schemas/user.ts
+import { z } from 'zod';
+
+// 1. Define Schema
+export const UserSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  role: z.enum(['admin', 'user']),
+  createdAt: z.date(),
+});
+
+// 2. Export Type (Inferred)
+export type User = z.infer<typeof UserSchema>;
+
+// 3. Usage in Server Action
+export async function updateUser(data: unknown) {
+  const result = UserSchema.safeParse(data);
+  if (!result.success) {
+    return { error: result.error.flatten() };
+  }
+  // Proceed with result.data (strictly typed)
+}
+```

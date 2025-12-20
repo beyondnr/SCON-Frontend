@@ -1,0 +1,75 @@
+---
+description: Next.js 15, Firebase, Server Actions Rules
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+# Next.js 15 & Firebase Development Rules
+
+## Core Principles
+- **App Router & Server Components (RSC)**: 
+  - Default to Server Components.
+  - Move logic to the server whenever possible to reduce client bundle size.
+  - Use `async/await` directly in RSC for data fetching.
+- **Client Components**: 
+  - Add `'use client'` directive at the very top of the file.
+  - Use strictly for:
+    - Interactive listeners (`onClick`, `onChange`)
+    - React Hooks (`useState`, `useEffect`, `useForm`)
+    - Browser-only APIs (`window`, `localStorage`)
+
+## Data Mutation (Server Actions)
+- **Prefer Server Actions** over API Routes for form submissions and mutations.
+- Define actions in separate files (e.g., `src/app/actions/auth.ts`) with `'use server'` at the top.
+- **Security**: Validate all inputs in Server Actions using Zod. Do not trust client data.
+- **Revalidation**: Use `revalidatePath` or `revalidateTag` to update the UI after mutation.
+
+## Firebase Integration
+- **Server-Side (Admin SDK)**: 
+  - Use `firebase-admin` in Server Components and Server Actions.
+  - Safe for accessing Firestore with privileged permissions.
+- **Client-Side (Client SDK)**: 
+  - Use standard `firebase/app`, `firebase/auth` for real-time listeners or direct user interactions (e.g., Google Sign-In popup).
+  - Initialize singleton instances in `src/lib/firebase.ts`.
+
+## Forms & Validation
+- Use **React Hook Form** for client-side state management.
+- Use **Zod** for schema definition.
+- Shared schemas: Define schemas in `src/lib/schemas` or inside the feature folder if isolated.
+
+## Example: Robust Server Action Pattern
+```typescript
+// src/features/auth/actions.ts
+'use server'
+
+import { z } from 'zod'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+})
+
+export async function loginAction(prevState: any, formData: FormData) {
+  // 1. Validate Input
+  const validatedFields = loginSchema.safeParse({
+    email: formData.get('email'),
+    // ...
+  })
+
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.flatten().fieldErrors }
+  }
+
+  // 2. Perform Logic (e.g., Firebase Admin Auth)
+  try {
+    // await auth.verifyIdToken(...) or similar logic
+  } catch (error) {
+    return { message: 'Authentication failed' }
+  }
+
+  // 3. Revalidate & Redirect
+  revalidatePath('/dashboard')
+  redirect('/dashboard')
+}
+```

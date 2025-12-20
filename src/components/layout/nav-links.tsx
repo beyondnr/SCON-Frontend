@@ -7,8 +7,7 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/dashboard", label: "근무표 대시보드" },
   { href: "/reports", label: "급여 리포트" },
-  { href: "/settings", label: "매장 설정" },
-  { href: "/availability", label: "가용시간 제출" },
+  { href: "/settings", label: "직원 관리" },
 ];
 
 export function NavLinks() {

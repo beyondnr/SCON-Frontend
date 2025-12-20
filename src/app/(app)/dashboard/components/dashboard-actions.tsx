@@ -3,23 +3,31 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { mockEmployees } from "@/lib/mock-data";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, XCircle, Send, ChevronDown, ChevronUp, Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { CheckCircle2, XCircle, Send, ChevronDown, ChevronUp, Clock, RotateCcw } from "lucide-react";
+import { generateMockToken } from "@/lib/utils";
 
 export function DashboardActions() {
   const { toast } = useToast();
   const [isApproveOpen, setIsApproveOpen] = useState(false);
   const [isRequestOpen, setIsRequestOpen] = useState(false);
+  
+  // Rejection Logic States
+  const [isRejectOpen, setIsRejectOpen] = useState(false);
+  const [rejectTarget, setRejectTarget] = useState<{ id: number; name: string } | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
   
   // Mock Data for interactions
   const [pendingApprovals, setPendingApprovals] = useState([
@@ -29,6 +37,8 @@ export function DashboardActions() {
 
   const [unsubmittedEmployees, setUnsubmittedEmployees] = useState([
     { id: 'emp-2', name: '이서연', status: 'not_requested' },
+    { id: 'emp-5', name: '정우성', status: 'not_requested' },
+    { id: 'emp-6', name: '한지민', status: 'not_requested' },
   ]);
 
   // Expanded state for accordion in approvals
@@ -43,16 +53,35 @@ export function DashboardActions() {
     });
   };
 
-  const handleReject = (id: number, name: string) => {
-    setPendingApprovals(prev => prev.filter(item => item.id !== id));
+  // Open Reject Modal
+  const handleRejectClick = (id: number, name: string) => {
+    setRejectTarget({ id, name });
+    setRejectReason(""); // Reset reason
+    setIsRejectOpen(true);
+  };
+
+  // Confirm Rejection
+  const handleConfirmReject = () => {
+    if (!rejectTarget) return;
+
+    setPendingApprovals(prev => prev.filter(item => item.id !== rejectTarget.id));
     toast({
       title: "근무표 반려 완료",
-      description: `${name}님의 근무표를 반려하였습니다.`,
+      description: `${rejectTarget.name}님의 근무표를 반려하였습니다. (사유: ${rejectReason || "입력 없음"})`,
       variant: "destructive",
     });
+    
+    setIsRejectOpen(false);
+    setRejectTarget(null);
   };
 
   const handleRequest = (empId: string, name: string) => {
+    const token = generateMockToken(empId);
+    const link = `${window.location.origin}/availability?token=${token}`;
+    
+    // console.log(`[Link Generated for ${name}]`, link); // For debugging
+    window.prompt(`[테스트용] ${name}님을 위한 링크가 생성되었습니다. 복사해서 사용하세요:`, link);
+
     setUnsubmittedEmployees(prev => prev.map(emp => 
       emp.id === empId ? { ...emp, status: 'requested' } : emp
     ));
@@ -60,6 +89,41 @@ export function DashboardActions() {
       title: "요청 전송 완료",
       description: `${name}님에게 근무표 작성을 요청하였습니다.`,
     });
+  };
+
+  const handleRequestAll = () => {
+    const targetCount = unsubmittedEmployees.filter(e => e.status === 'not_requested').length;
+    
+    if (targetCount === 0) {
+      toast({
+        title: "알림",
+        description: "요청을 보낼 대상이 없습니다.",
+        variant: "secondary", // using secondary as info-like
+      });
+      return;
+    }
+
+    if (confirm("아직 요청하지 않은 직원 전체에 알림을 보내시겠습니까?")) {
+      // Only update employees who are NOT yet requested
+      setUnsubmittedEmployees(prev => prev.map(emp => 
+        emp.status === 'not_requested' ? { ...emp, status: 'requested' } : emp
+      ));
+      
+      // Generate links and logs for newly requested employees (Mock Logic)
+      const newlyRequested = unsubmittedEmployees.filter(e => e.status === 'not_requested');
+      newlyRequested.forEach(emp => {
+         const token = generateMockToken(emp.id);
+         const link = `${window.location.origin}/availability?token=${token}`;
+         // In a real app, this would trigger an API call to send emails/SMS
+         // For demo, we just log or maybe prompt the first one (but prompting all is annoying)
+         console.log(`[Batch Request] Link for ${emp.name}: ${link}`);
+      });
+
+      toast({
+        title: "전체 요청 전송 완료",
+        description: `총 ${targetCount}명의 직원에게 요청을 보냈습니다.`,
+      });
+    }
   };
 
   const pendingCount = pendingApprovals.length;
@@ -121,7 +185,6 @@ export function DashboardActions() {
                         <div className="text-sm text-muted-foreground">{item.submittedAt}</div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50">대기</Badge>
                         {expandedApprovalId === item.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                       </div>
                     </div>
@@ -149,7 +212,7 @@ export function DashboardActions() {
                           <Button 
                             variant="outline" 
                             className="flex-1 border-destructive/30 text-destructive hover:bg-destructive/10 h-12"
-                            onClick={() => handleReject(item.id, item.name)}
+                            onClick={() => handleRejectClick(item.id, item.name)}
                           >
                             <XCircle className="mr-2 h-5 w-5" />
                             반려
@@ -162,6 +225,40 @@ export function DashboardActions() {
               )}
             </div>
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* 반려 사유 입력 모달 (Nested Dialog Alternative using simple state control on top) */}
+      {/* Note: To avoid nested Dialog issues in some library versions, ensure proper z-index or management. 
+          Shadcn UI (Radix) supports nested dialogs but sometimes requires care. 
+          Here we open a second dialog on top of the first one. */}
+      <Dialog open={isRejectOpen} onOpenChange={setIsRejectOpen}>
+        <DialogContent className="sm:max-w-[400px] z-[150]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-headline text-destructive flex items-center gap-2">
+              <XCircle className="h-5 w-5" />
+              근무표 반려 사유 입력
+            </DialogTitle>
+            <DialogDescription>
+              {rejectTarget?.name}님의 근무표를 반려하는 이유를 입력해주세요.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reason">반려 사유</Label>
+              <Textarea 
+                id="reason" 
+                placeholder="예: 주말 근무 시간이 너무 적습니다. 조정 부탁드려요." 
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsRejectOpen(false)}>취소</Button>
+            <Button variant="destructive" onClick={handleConfirmReject}>반려 확정</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -180,9 +277,21 @@ export function DashboardActions() {
                 <div key={emp.id} className="flex items-center justify-between p-3 border rounded-lg bg-card">
                   <span className="font-medium text-lg">{emp.name}</span>
                   {emp.status === 'requested' ? (
-                    <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100">
-                      요청 완료
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100">
+                        요청 완료
+                      </Badge>
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => handleRequest(emp.id, emp.name)}
+                        className="h-7 px-2 text-muted-foreground hover:text-primary"
+                        title="링크 재전송"
+                      >
+                        <RotateCcw className="w-3 h-3 mr-1" />
+                        재전송
+                      </Button>
+                    </div>
                   ) : (
                     <Button 
                       size="sm" 
@@ -197,6 +306,16 @@ export function DashboardActions() {
               ))}
             </div>
           </ScrollArea>
+          <DialogFooter className="pt-2">
+             <Button 
+               className="w-full font-bold" 
+               onClick={handleRequestAll}
+               disabled={unsubmittedEmployees.every(e => e.status === 'requested')}
+             >
+               <Send className="w-4 h-4 mr-2" />
+               미제출 인원 전체 요청하기
+             </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

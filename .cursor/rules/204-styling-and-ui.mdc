@@ -1,0 +1,50 @@
+---
+description: Rules for Tailwind CSS, Shadcn UI, and styling consistency
+globs: **/*.tsx
+alwaysApply: false
+---
+# Styling & UI Rules
+
+## Core Tech Stack
+- **Tailwind CSS**: Utility-first styling.
+- **Shadcn UI**: Component library based on Radix UI.
+- **Lucide React**: Icon library.
+- **Clsx & Tailwind-Merge**: Class name conditional logic and merging.
+
+## Usage Guidelines
+
+### 1. Class Merging
+- ALWAYS use the `cn(...)` utility function for merging default classes with props.
+- Do not use string templates for class manipulation if conditional logic is complex.
+
+```typescript
+import { cn } from "@/lib/utils"
+
+// Good
+<div className={cn("flex items-center", className)}>
+
+// Bad
+<div className={`flex items-center ${className}`}>
+```
+
+### 2. Component Structure (Shadcn)
+- Place Shadcn UI components in `src/components/ui/`.
+- Do not modify the core logic of Shadcn components unless absolutely necessary.
+- Customize styles via `tailwind.config.ts` theme variables or by overriding classes with `cn()`.
+
+### 3. Tailwind Best Practices
+- **Mobile First**: Default classes are for mobile. Use `md:`, `lg:` for larger screens.
+- **Color Variables**: Use CSS variables defined in `globals.css` (e.g., `bg-primary`, `text-foreground`) instead of hardcoded hex codes.
+- **Ordering**: Follow a consistent order (Layout -> Box Model -> Typography -> Visuals -> Misc) or rely on the Prettier plugin if configured.
+
+### 4. Responsive Design
+- Ensure all pages are responsive.
+- Use standard breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`).
+- Test layouts on mobile view during development.
+
+### 5. Icons
+- Import icons from `lucide-react`.
+- Set icon size and stroke width via class names or props consistent with the design system.
+```typescript
+<Calendar className="mr-2 h-4 w-4" />
+```

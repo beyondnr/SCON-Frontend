@@ -1,0 +1,35 @@
+---
+description: Next.js App Router 프로젝트 폴더 구조 및 아키텍처 가이드
+globs: **/*
+alwaysApply: false
+---
+# Feature-Based Folder Structure
+
+## Core Philosophy
+- **Colocation**: Keep related code (components, hooks, utils) close together.
+- **Feature Separation**: Group code by business feature, not by technical type.
+
+## Directory Structure Rules
+
+### 1. `app/` (Routing Layer)
+- Contains ONLY routing logic (`page.tsx`, `layout.tsx`, `route.ts`).
+- Keep these files minimal. Import complex logic from `features/`.
+
+### 2. `features/` (Business Logic Layer)
+- Structure: `features/<feature-name>/`
+  - `components/`: Feature-specific UI components
+  - `hooks/`: Custom hooks for this feature
+  - `lib/` or `utils/`: Feature-specific helpers
+  - `types/`: Feature-specific type definitions (if not inferred from Zod)
+- Example: `features/auth/`, `features/dashboard/`, `features/chat/`
+
+### 3. `components/ui/` (Shared UI Layer)
+- Dumb UI components only (Buttons, Inputs, Cards).
+- Mostly Shadcn UI components. No business logic here.
+
+### 4. `lib/` (Shared Utilities)
+- Global singleton instances (e.g., `firebase.ts`, `db.ts`).
+- Generic helpers used across multiple features (e.g., `date-utils.ts`).
+
+## Import Rules
+- Prefer absolute imports (e.g., `@/features/auth/...`) over relative (`../../`).

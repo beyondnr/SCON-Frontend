@@ -1,0 +1,51 @@
+---
+description: Google Genkit AI integration rules and best practices
+globs: src/ai/**/*.ts
+alwaysApply: false
+---
+# Genkit AI Rules
+
+## Core Philosophy
+- **Server-Side Execution**: All Genkit flows must run in a secure server environment (Next.js API Routes or Server Actions). Never expose Genkit logic to the client.
+- **Structured Output**: Always use Zod schemas to define input and output formats for robust type safety.
+- **Stateless Flows**: Design flows to be stateless where possible. Pass all necessary context (e.g., previous messages) in the input.
+
+## File Structure
+- Location: `src/ai/`
+- Naming: `src/ai/flows/<flow-name>.ts` for flow definitions.
+- Configuration: `src/ai/genkit.ts` for SDK initialization and plugin setup.
+
+## Implementation Guidelines
+
+### 1. Defining Flows
+- Use `ai.defineFlow` for creating reusable AI logic.
+- Clearly define `inputSchema` and `outputSchema` using Zod.
+
+```typescript
+import { z } from 'zod';
+import { ai } from '../genkit';
+
+export const myFlow = ai.defineFlow({
+  name: 'myFlow',
+  inputSchema: z.object({ prompt: z.string() }),
+  outputSchema: z.object({ response: z.string() }),
+}, async (input) => {
+  // ... AI logic here
+  return { response: '...' };
+});
+```
+
+### 2. Error Handling
+- Wrap AI calls in `try-catch` blocks.
+- Return structured error responses rather than throwing raw exceptions when possible, or let the upper layer handle specific Genkit errors.
+
+### 3. Security
+- Never commit API keys. Use `GOOGLE_GENAI_API_KEY` in `.env.local`.
+- Verify user permissions before invoking flows if the flow accesses sensitive data.
+
+### 4. Prompt Engineering
+- Keep prompts in the code or use Genkit's Dotprompt files (`.prompt`) if complexity grows.
+- Use rigorous typing for prompt variables.
+
+## Testing
+- Use `genkit start` to test flows interactively via the Genkit Developer UI.

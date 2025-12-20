@@ -23,6 +23,9 @@ const employeeSchema = z.object({
   name: z.string().min(1, { message: "직원 이름을 입력해주세요." }),
   hourlyRate: z.coerce.number().min(1, { message: "시급을 입력해주세요." }),
   role: z.string().min(1, { message: "역할을 선택해주세요." }),
+  shiftPreset: z.enum(['morning', 'afternoon', 'custom']).optional(),
+  customShiftStart: z.string().optional(),
+  customShiftEnd: z.string().optional(),
 });
 
 export const onboardingSchema = z.object({
@@ -55,7 +58,7 @@ export function OnboardingProvider({ children }: PropsWithChildren) {
         openingTime: "09:00",
         closingTime: "22:00",
       },
-      employees: [{ name: "", hourlyRate: 9860, role: "직원" }],
+      employees: [{ name: "", hourlyRate: 9860, role: "직원", shiftPreset: "morning" }],
     },
     mode: "onBlur",
   });

@@ -47,4 +47,6 @@ firestore-debug.log
 # IDE (from BA-to-SW-Dev/Frontend)
 .idea/
 *.swp
-*.swo
+*.swostart_log_2.txt
+issue*.json
+*.graphql

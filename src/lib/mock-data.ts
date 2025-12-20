@@ -1,4 +1,4 @@
-import type { Store, Employee, Schedule, Payroll } from './types';
+import type { Store, Employee, Schedule, Payroll, ReportHistoryItem } from './types';
 
 export const mockStore: Store = {
   name: '행복 베이커리',
@@ -8,10 +8,52 @@ export const mockStore: Store = {
 };
 
 export const mockEmployees: Employee[] = [
-  { id: 'emp-1', name: '김민준', hourlyRate: 10000, role: '매니저', avatarUrl: '/avatars/1.png' },
-  { id: 'emp-2', name: '이서연', hourlyRate: 9860, role: '직원', avatarUrl: '/avatars/2.png' },
-  { id: 'emp-3', name: '박하준', hourlyRate: 9860, role: '직원', avatarUrl: '/avatars/3.png' },
-  { id: 'emp-4', name: '최지우', hourlyRate: 9860, role: '직원', avatarUrl: '/avatars/4.png' },
+  { 
+    id: 'emp-1', 
+    name: '김민준', 
+    email: 'minjun@scon.com', 
+    phoneNumber: '010-1234-5678', 
+    hourlyRate: 10000, 
+    role: '매니저', 
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=minjun', 
+    color: '#E07A5F',
+    shiftPreset: 'morning'
+  },
+  { 
+    id: 'emp-2', 
+    name: '이서연', 
+    email: 'seoyeon@scon.com', 
+    phoneNumber: '010-2345-6789', 
+    hourlyRate: 9860, 
+    role: '직원', 
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=seoyeon', 
+    color: '#D4A373',
+    shiftPreset: 'afternoon'
+  },
+  { 
+    id: 'emp-3', 
+    name: '박하준', 
+    email: 'hajun@scon.com', 
+    phoneNumber: '010-3456-7890', 
+    hourlyRate: 9860, 
+    role: '직원', 
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=hajun', 
+    color: '#81B29A',
+    shiftPreset: 'morning'
+  },
+  { 
+    id: 'emp-4', 
+    name: '최지우', 
+    email: 'jiwoo@scon.com', 
+    phoneNumber: '010-4567-8901', 
+    hourlyRate: 9860, 
+    role: '직원', 
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jiwoo', 
+    color: '#7D8CC4',
+    shiftPreset: 'custom',
+    customShiftStart: '18:00',
+    customShiftEnd: '22:00'
+  },
 ];
 
 export const weekDays = ['월', '화', '수', '목', '금', '토', '일'];
@@ -101,5 +143,26 @@ export const mockPayrolls: Payroll[] = [
     nightPay: 4930,
     holidayPay: 0,
     totalPay: 217906,
+  },
+];
+
+export const mockReportHistory: ReportHistoryItem[] = [
+  {
+    id: 'rep-2403-1',
+    period: '2024.02.26 ~ 2024.03.03 (3월 1주)',
+    totalHours: 108,
+    totalAmount: 1280000,
+  },
+  {
+    id: 'rep-2402-4',
+    period: '2024.02.19 ~ 2024.02.25 (2월 4주)',
+    totalHours: 115,
+    totalAmount: 1420000,
+  },
+  {
+    id: 'rep-2402-3',
+    period: '2024.02.12 ~ 2024.02.18 (2월 3주)',
+    totalHours: 110,
+    totalAmount: 1310000,
   },
 ];
