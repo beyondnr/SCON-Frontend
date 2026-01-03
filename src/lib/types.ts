@@ -14,6 +14,8 @@ export type Store = {
   businessType: string;
   openingTime: string;
   closingTime: string;
+  // 매장 휴무일 (API 매핑용)
+  weeklyHoliday?: string;
 };
 
 export type EmployeeRole = '직원' | '매니저';
@@ -38,6 +40,9 @@ export type Employee = {
   shiftPreset?: ShiftPreset; // MVP에서는 optional로 시작, 추후 required 권장
   customShiftStart?: string; // "HH:mm"
   customShiftEnd?: string;   // "HH:mm"
+  
+  // 개인 휴무일 (API 매핑용)
+  personalHoliday?: string;
 };
 
 export type TimeRange = {
@@ -115,3 +120,47 @@ export type ReportHistoryItem = {
   totalHours: number;
   totalAmount: number;
 };
+
+/**
+ * [Type Definition]
+ * API 응답 래퍼 타입
+ * 백엔드에서 반환하는 표준 응답 형식
+ */
+export interface ApiResponse<T = unknown> {
+  status: number;
+  message: string;
+  data: T;
+  timestamp?: string;
+}
+
+/**
+ * [Type Definition]
+ * API 에러 응답 타입
+ */
+export interface ApiError {
+  status: number;
+  message: string;
+  error?: string;
+  fieldErrors?: Array<{
+    field: string;
+    message: string;
+  }>;
+  timestamp?: string;
+}
+
+/**
+ * [Type Definition]
+ * 필드별 유효성 검증 에러
+ */
+export interface FieldError {
+  field: string;
+  message: string;
+}
+
+/**
+ * [Type Definition]
+ * API 에러 응답 (필드 에러 포함)
+ */
+export interface ApiErrorWithFields extends ApiError {
+  fieldErrors: FieldError[];
+}

@@ -11,6 +11,8 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'ax
 import { toast } from '@/hooks/use-toast';
 import { clearAuthTokens } from './local-storage-utils';
 import { getUserFriendlyMessage } from './error-messages';
+import { clientEnv } from './env';
+import type { ApiResponse, ApiError, FieldError } from './types';
 
 // API 클라이언트 인스턴스 생성
 const apiClient = axios.create({
@@ -53,32 +55,33 @@ apiClient.interceptors.request.use(
 
 // 응답 인터셉터: API 응답 형식 처리 및 에러 처리
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => {
+  (response: AxiosResponse<ApiResponse<unknown> | unknown>) => {
     // ApiResponse<T> 래퍼 처리
     // 대부분의 API는 { status, message, data, timestamp } 형식
     if (response.data && typeof response.data === 'object' && 'data' in response.data) {
-      return { ...response, data: response.data.data };
+      const apiResponse = response.data as ApiResponse<unknown>;
+      return { ...response, data: apiResponse.data };
     }
     // 스케줄 조회 API 등은 배열을 직접 반환
     return response;
   },
-  (error: AxiosError) => {
+  async (error: AxiosError<ApiError | string>) => {
     const status = error.response?.status;
-    const responseData = error.response?.data as Record<string, unknown> | undefined;
+    const responseData = error.response?.data as ApiError | string | undefined;
     
     // 에러 메시지 추출
     let errorMessage = '알 수 없는 오류가 발생했습니다.';
-    if (responseData?.message && typeof responseData.message === 'string') {
-      errorMessage = getUserFriendlyMessage(responseData.message);
-    } else if (responseData?.error && typeof responseData.error === 'string') {
-      errorMessage = getUserFriendlyMessage(responseData.error);
+    if (responseData && typeof responseData === 'object' && 'message' in responseData) {
+      const apiError = responseData as ApiError;
+      errorMessage = getUserFriendlyMessage(apiError.message || apiError.error || errorMessage);
     } else if (typeof responseData === 'string') {
       errorMessage = getUserFriendlyMessage(responseData);
     }
 
     // 400 Bad Request
     if (status === 400) {
-      const fieldErrors = responseData?.fieldErrors as Array<{ field: string; message: string }> | undefined;
+      const apiError = responseData as ApiError | undefined;
+      const fieldErrors = apiError?.fieldErrors;
       if (fieldErrors && fieldErrors.length > 0) {
         const firstError = fieldErrors[0];
         toast({
@@ -99,8 +102,9 @@ apiClient.interceptors.response.use(
       const originalRequest = error.config as InternalAxiosRequestConfig | undefined;
       
       // 토큰 갱신 시도 (원래 요청이 있고, 아직 재시도하지 않은 경우)
-      if (originalRequest && !originalRequest._retry) {
-        originalRequest._retry = true;
+      const retryKey = '_retry' as keyof InternalAxiosRequestConfig;
+      if (originalRequest && !(originalRequest as any)[retryKey]) {
+        (originalRequest as any)[retryKey] = true;
         
         try {
           // Refresh Token은 HttpOnly Cookie에 저장되어 있으므로 자동 전송됨
@@ -181,17 +185,20 @@ apiClient.interceptors.response.use(
     }
     // 500 Internal Server Error
     else if (status && status >= 500) {
+      // 백엔드 서버 연결 확인을 위한 상세 메시지
+      const backendUrl = clientEnv.NEXT_PUBLIC_API_BASE_URL;
       toast({
         title: '서버 오류',
-        description: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+        description: `서버 오류가 발생했습니다. 백엔드 서버(${backendUrl})가 실행 중인지 확인해주세요.`,
         variant: 'destructive',
       });
     }
     // 네트워크 에러 (서버 연결 불가)
     else if (!error.response) {
+      const backendUrl = clientEnv.NEXT_PUBLIC_API_BASE_URL;
       toast({
         title: '네트워크 오류',
-        description: '서버에 연결할 수 없습니다. 네트워크를 확인해주세요.',
+        description: `서버에 연결할 수 없습니다. 백엔드 서버(${backendUrl})가 실행 중인지 확인해주세요.`,
         variant: 'destructive',
       });
     }

@@ -6,7 +6,10 @@
  * - 민감 정보(비밀번호, 토큰)는 절대 로그하지 않음
  */
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+// 서버 사이드에서는 검증된 환경 변수 사용, 클라이언트에서는 직접 접근
+const isDevelopment = typeof window === 'undefined' 
+  ? process.env.NODE_ENV === 'development'
+  : process.env.NODE_ENV === 'development';
 
 /**
  * 민감 정보를 제거한 데이터 반환

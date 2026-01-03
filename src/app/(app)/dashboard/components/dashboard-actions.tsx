@@ -98,7 +98,7 @@ export function DashboardActions() {
       toast({
         title: "알림",
         description: "요청을 보낼 대상이 없습니다.",
-        variant: "secondary", // using secondary as info-like
+        variant: "default", // using default as info-like
       });
       return;
     }
