@@ -215,14 +215,15 @@ export interface SignupRequest {
 
 /**
  * 회원가입 응답 타입
+ * 
+ * 주의: accessToken, refreshToken은 HttpOnly Cookie로 설정되므로
+ * 응답 본문에 포함되지 않습니다.
  */
 export interface SignupResponse {
   ownerId: number;
   email: string;
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
-  expiresIn: number;
+  // accessToken, refreshToken은 HttpOnly Cookie로 설정됨 (응답 본문에 없음)
+  // tokenType, expiresIn도 백엔드에서 제거될 수 있음
 }
 
 /**
@@ -235,14 +236,15 @@ export interface LoginRequest {
 
 /**
  * 로그인 응답 타입
+ * 
+ * 주의: accessToken, refreshToken은 HttpOnly Cookie로 설정되므로
+ * 응답 본문에 포함되지 않습니다.
  */
 export interface LoginResponse {
   ownerId: number;
   email: string;
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
-  expiresIn: number;
+  // accessToken, refreshToken은 HttpOnly Cookie로 설정됨 (응답 본문에 없음)
+  // tokenType, expiresIn도 백엔드에서 제거될 수 있음
 }
 
 // ============================================

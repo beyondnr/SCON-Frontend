@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from "@/components/layout/logo";
 import { Form } from "@/components/ui/form";
+import { CenteredLayout } from "@/components/layout/centered-layout";
 
 const steps = [
   { id: 1, component: Step1Account },
@@ -52,35 +53,33 @@ function OnboardingWizard() {
     ?.component as React.ElementType;
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-muted/40 p-4">
-      <div className="w-full max-w-2xl">
-        <div className="mb-8 flex justify-center">
-            <Logo />
-        </div>
-        <div className="bg-card p-6 md:p-8 rounded-xl shadow-lg">
-          <OnboardingProgress currentStep={currentStep} totalSteps={steps.length} />
-          <Form {...form}>
-            <form onSubmit={(e) => e.preventDefault()} className="mt-8">
-              <CurrentStepComponent />
-            </form>
-          </Form>
-          <div className="mt-8 flex justify-between">
-            <Button
-              variant="outline"
-              onClick={handlePrev}
-              disabled={currentStep === 1}
-            >
-              이전
-            </Button>
-            {currentStep < steps.length ? (
-              <Button onClick={handleNext}>다음</Button>
-            ) : (
-              <Button onClick={handleFinish}>완료</Button>
-            )}
-          </div>
+    <CenteredLayout maxWidth="2xl">
+      <div className="mb-8 flex justify-center">
+        <Logo />
+      </div>
+      <div className="bg-card p-6 md:p-8 rounded-xl shadow-lg">
+        <OnboardingProgress currentStep={currentStep} totalSteps={steps.length} />
+        <Form {...form}>
+          <form onSubmit={(e) => e.preventDefault()} className="mt-8">
+            <CurrentStepComponent />
+          </form>
+        </Form>
+        <div className="mt-8 flex justify-between">
+          <Button
+            variant="outline"
+            onClick={handlePrev}
+            disabled={currentStep === 1}
+          >
+            이전
+          </Button>
+          {currentStep < steps.length ? (
+            <Button onClick={handleNext}>다음</Button>
+          ) : (
+            <Button onClick={handleFinish}>완료</Button>
+          )}
         </div>
       </div>
-    </div>
+    </CenteredLayout>
   );
 }
 

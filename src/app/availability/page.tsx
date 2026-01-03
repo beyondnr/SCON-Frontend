@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { CenteredLayout } from '@/components/layout/centered-layout';
 
 export default function AvailabilityPage() {
     return (
-        <div className="flex flex-col min-h-screen items-center justify-center bg-muted/40 p-4">
-            <Card className="w-full max-w-md text-center shadow-lg">
+        <CenteredLayout maxWidth="md">
+            <Card className="w-full text-center shadow-lg">
                 <CardHeader>
                     <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                     <CardTitle className="text-2xl font-headline">페이지 이용 불가</CardTitle>
@@ -25,6 +26,6 @@ export default function AvailabilityPage() {
                     </Link>
                 </CardContent>
             </Card>
-        </div>
+        </CenteredLayout>
     );
 }

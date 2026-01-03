@@ -1,25 +1,40 @@
 "use client";
 
+import { useMemo } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Download, Printer } from "lucide-react";
-import { PayrollTable } from "./components/payroll-table";
 import { ReportHistory } from "./components/report-history";
 import { mockPayrolls } from "@/lib/mock-data";
 import { formatCurrency } from "@/lib/utils";
 import { ReportActions } from "./components/report-actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PageHeader } from "@/components/layout/page-header";
+
+// 코드 스플리팅: 대용량 테이블 컴포넌트 지연 로딩
+const PayrollTable = dynamic(
+  () => import("./components/payroll-table").then((mod) => ({ default: mod.PayrollTable })),
+  {
+    loading: () => <div className="flex items-center justify-center h-64">로딩 중...</div>,
+    ssr: false,
+  }
+);
 
 export default function ReportsPage() {
-  const totalPayroll = mockPayrolls.reduce((sum, p) => sum + p.totalPay, 0);
+  // 메모이제이션: 총 인건비 계산
+  const totalPayroll = useMemo(
+    () => mockPayrolls.reduce((sum, p) => sum + p.totalPay, 0),
+    []
+  );
 
   return (
     <div className="space-y-8 print:space-y-4">
-      <div className="flex flex-col md:flex-row justify-between items-start gap-4 print:hidden">
-        <div>
-          <h1 className="text-3xl font-bold font-headline">급여 리포트</h1>
-          <p className="text-muted-foreground">매장 급여 내역을 확인하고 관리하세요.</p>
-        </div>
-        <ReportActions />
+      <div className="print:hidden">
+        <PageHeader
+          title="급여 리포트"
+          description="매장 급여 내역을 확인하고 관리하세요."
+          action={<ReportActions />}
+        />
       </div>
 
       <Tabs defaultValue="current" className="space-y-6">
