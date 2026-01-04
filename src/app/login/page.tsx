@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,8 @@ import { logger } from "@/lib/logger";
 // true: 백엔드 API 호출, false: 로컬 테스트 모드
 const ENABLE_BACKEND_API = true;
 
-export default function LoginPage() {
+// useSearchParams를 사용하는 컴포넌트를 분리
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -119,95 +120,139 @@ export default function LoginPage() {
   };
 
   return (
+    <div className="bg-card p-6 md:p-8 rounded-xl shadow-lg">
+      <h1 className="text-2xl font-headline font-bold mb-2">로그인</h1>
+      <p className="text-muted-foreground mb-6">
+        계정에 로그인하여 SCON을 시작하세요.
+      </p>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">이메일</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="example@lawfulshift.com"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (emailError) setEmailError("");
+            }}
+            onBlur={() => validateEmail(email)}
+            className={emailError ? "border-destructive" : ""}
+            disabled={isLoading}
+          />
+          {emailError && (
+            <p className="text-xs text-destructive">{emailError}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">비밀번호</Label>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="비밀번호를 입력하세요"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (passwordError) setPasswordError("");
+              }}
+              onBlur={() => validatePassword(password)}
+              className={passwordError ? "border-destructive pr-10" : "pr-10"}
+              disabled={isLoading}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              disabled={isLoading}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+          {passwordError && (
+            <p className="text-xs text-destructive">{passwordError}</p>
+          )}
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isLoading || !email || !password}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              로그인 중...
+            </>
+          ) : (
+            "로그인"
+          )}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center text-sm">
+        <span className="text-muted-foreground">계정이 없으신가요? </span>
+        <Link href="/onboarding" className="text-primary hover:underline">
+          무료로 시작하기
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// 로딩 폴백 컴포넌트
+function LoginFormFallback() {
+  return (
+    <div className="bg-card p-6 md:p-8 rounded-xl shadow-lg">
+      <h1 className="text-2xl font-headline font-bold mb-2">로그인</h1>
+      <p className="text-muted-foreground mb-6">
+        계정에 로그인하여 SCON을 시작하세요.
+      </p>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">이메일</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="example@lawfulshift.com"
+            disabled
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">비밀번호</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="비밀번호를 입력하세요"
+            disabled
+          />
+        </div>
+        <Button className="w-full" disabled>
+          로그인
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// 메인 페이지 컴포넌트
+export default function LoginPage() {
+  return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-muted/40 p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
           <Logo />
         </div>
-        <div className="bg-card p-6 md:p-8 rounded-xl shadow-lg">
-          <h1 className="text-2xl font-headline font-bold mb-2">로그인</h1>
-          <p className="text-muted-foreground mb-6">
-            계정에 로그인하여 SCON을 시작하세요.
-          </p>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">이메일</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="example@lawfulshift.com"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (emailError) setEmailError("");
-                }}
-                onBlur={() => validateEmail(email)}
-                className={emailError ? "border-destructive" : ""}
-                disabled={isLoading}
-              />
-              {emailError && (
-                <p className="text-xs text-destructive">{emailError}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">비밀번호</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="비밀번호를 입력하세요"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (passwordError) setPasswordError("");
-                  }}
-                  onBlur={() => validatePassword(password)}
-                  className={passwordError ? "border-destructive pr-10" : "pr-10"}
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  disabled={isLoading}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              {passwordError && (
-                <p className="text-xs text-destructive">{passwordError}</p>
-              )}
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading || !email || !password}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  로그인 중...
-                </>
-              ) : (
-                "로그인"
-              )}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">계정이 없으신가요? </span>
-            <Link href="/onboarding" className="text-primary hover:underline">
-              무료로 시작하기
-            </Link>
-          </div>
-        </div>
+        <Suspense fallback={<LoginFormFallback />}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );
