@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,11 @@ export default function LoginPage() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
+  
+  // 리다이렉트 경로 가져오기 (middleware에서 설정한 쿼리 파라미터)
+  const redirectPath = searchParams.get('redirect') || '/dashboard';
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -105,7 +109,8 @@ export default function LoginPage() {
         description: "대시보드로 이동합니다.",
       });
 
-      router.push("/dashboard");
+      // 리다이렉트 경로가 있으면 해당 경로로, 없으면 대시보드로 이동
+      router.push(redirectPath);
     } catch (error) {
       // 에러는 apiClient 인터셉터에서 자동으로 Toast 표시됨
       logger.error("Login error", error);
