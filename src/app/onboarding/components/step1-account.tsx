@@ -18,6 +18,19 @@ export default function Step1Account() {
       <h2 className="text-2xl font-headline font-bold">사장님 계정 정보를 입력해주세요.</h2>
       <FormField
         control={form.control}
+        name="account.name"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>이름</FormLabel>
+            <FormControl>
+              <Input placeholder="홍길동" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
         name="account.email"
         render={({ field }) => (
           <FormItem>
@@ -37,6 +50,19 @@ export default function Step1Account() {
             <FormLabel>비밀번호</FormLabel>
             <FormControl>
               <Input type="password" placeholder="6자 이상 입력" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="account.passwordConfirm"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>비밀번호 확인</FormLabel>
+            <FormControl>
+              <Input type="password" placeholder="비밀번호를 다시 입력해주세요" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
