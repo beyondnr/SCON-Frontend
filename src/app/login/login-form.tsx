@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,11 +26,20 @@ export default function LoginForm() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { toast } = useToast();
   
   // 리다이렉트 경로 가져오기 (middleware에서 설정한 쿼리 파라미터)
-  const redirectPath = searchParams.get('redirect') || '/dashboard';
+  // useSearchParams를 useEffect 내부에서만 사용하여 빌드 시점 문제 방지
+  const [redirectPath, setRedirectPath] = useState('/dashboard');
+  
+  useEffect(() => {
+    // 클라이언트 사이드에서만 실행되도록 보장
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirect = searchParams.get('redirect') || '/dashboard';
+      setRedirectPath(redirect);
+    }
+  }, []);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
