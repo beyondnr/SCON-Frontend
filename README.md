@@ -159,7 +159,21 @@ graph TD
    * HttpOnly Cookie 기반 JWT 인증 (자동 토큰 갱신 지원)
    * Next.js 프록시를 통한 백엔드 API 호출 (`/api` → 백엔드 서버)
    * 통합 에러 처리 및 Toast 알림
+   * `withCredentials: true` 설정으로 Cookie 자동 전송
 5. **UI Rendering**: 변경된 상태를 React 컴포넌트에 반영 및 Re-render
+
+### 보안 특징
+
+* **HttpOnly Cookie 인증**: 
+  * XSS 공격 방지를 위해 토큰을 HttpOnly Cookie에 저장
+  * JavaScript로 토큰 접근 불가 (localStorage/sessionStorage 사용 금지)
+  * 브라우저가 자동으로 Cookie 관리
+* **자동 토큰 갱신**: 
+  * 401 에러 시 자동으로 Refresh Token을 사용하여 Access Token 갱신
+  * 갱신 실패 시 로그인 페이지로 자동 리다이렉트
+* **민감 정보 로깅 제어**: 
+  * 개발 환경에서만 디버그 로그 출력
+  * 비밀번호, 토큰 등 민감 정보는 로그에서 제외
 
 ## 7. 핵심 UX 특징
 
@@ -188,6 +202,9 @@ graph TD
 ### ✅ 완료된 기능
 
 * **인증 시스템**: HttpOnly Cookie 기반 JWT 인증 구현 완료
+  * `withCredentials: true` 설정으로 Cookie 자동 전송
+  * 자동 토큰 갱신 로직 구현
+  * 로그아웃 시 Cookie 삭제 처리
 * **온보딩 플로우**: 3단계 온보딩 (계정 생성 → 매장 정보 → 직원 등록) 구현 완료
 * **로그인 페이지**: 이메일/비밀번호 로그인 구현 완료
 * **대시보드**: 스케줄 조회, 요약 카드, 월간/주간 뷰 구현 완료
@@ -195,7 +212,11 @@ graph TD
 * **마이페이지**: 사용자 프로필 조회/수정 구현 완료
 * **리포트 페이지**: 급여 계산 테이블, 리포트 이력 구현 완료
 * **API 클라이언트**: Axios 기반 통합 API 클라이언트 구현 완료
-* **에러 처리**: 통합 에러 처리 및 Toast 알림 구현 완료
+  * Next.js 프록시 설정 (`/api` → 백엔드 서버)
+  * 통합 에러 처리 및 Toast 알림
+* **보안 기능**: 
+  * 민감 정보 로깅 제어 (개발 환경에서만 디버그 로그)
+  * localStorage에 토큰 저장 금지 (HttpOnly Cookie만 사용)
 
 ### 🔄 진행 중인 작업
 
