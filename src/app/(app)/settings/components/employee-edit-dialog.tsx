@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Employee, EmployeeRole, ShiftPreset } from "@/lib/types";
@@ -39,6 +41,8 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
 
   const [emailError, setEmailError] = useState("");
   const [phoneError, setPhoneError] = useState("");
+  const [consentVerified, setConsentVerified] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -61,6 +65,7 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
 
         setEmailError("");
         setPhoneError("");
+        setConsentVerified(true); // 수정 모드에서는 동의 체크 불필요
       } else {
         // Add mode reset
         setName("");
@@ -76,6 +81,7 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
 
         setEmailError("");
         setPhoneError("");
+        setConsentVerified(false); // 추가 모드에서는 동의 체크 필요
       }
     }
   }, [isOpen, employee]);
@@ -138,6 +144,17 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
         return;
     }
 
+    // 추가 모드이고 이메일이 있을 때만 확인 팝업 표시
+    if (!employee && email) {
+      setShowConfirmDialog(true);
+      return;
+    }
+
+    // 수정 모드이거나 이메일이 없으면 바로 저장
+    saveEmployee();
+  };
+
+  const saveEmployee = () => {
     const usedColors = existingEmployees
       .map(e => e.color)
       .filter((c): c is string => !!c);
@@ -157,7 +174,14 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
       customShiftStart: shiftPreset === 'custom' ? customStart : undefined,
       customShiftEnd: shiftPreset === 'custom' ? customEnd : undefined,
     };
+    
+    // 이메일 발송 로그 (Mock)
+    if (!employee && email) {
+      console.log(`[Mock] 안내 메일 발송: ${email}로 개인정보 수집 출처 안내 메일이 발송되었습니다.`);
+    }
+    
     onSave(newEmployee);
+    setShowConfirmDialog(false);
     onClose();
   };
 
@@ -298,14 +322,60 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
             )}
           </div>
 
+          {/* 개인정보 수집 동의 체크박스 (추가 모드일 때만 표시) */}
+          {!employee && (
+            <div className="grid gap-4 pt-2 border-t">
+              <div className="flex items-start space-x-3">
+                <Checkbox
+                  id="consent"
+                  checked={consentVerified}
+                  onCheckedChange={(checked) => setConsentVerified(checked === true)}
+                />
+                <label
+                  htmlFor="consent"
+                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                >
+                  직원에게 개인정보 수집 및 이용 동의를 받았습니다{" "}
+                  <span className="text-destructive">(필수)</span>
+                </label>
+              </div>
+            </div>
+          )}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>취소</Button>
-          <Button onClick={handleSave} disabled={!!emailError || !!phoneError || !email || !phoneNumber || !name || !hourlyRate}>
-            저장
+          <Button 
+            onClick={handleSave} 
+            disabled={
+              !!emailError || 
+              !!phoneError || 
+              !email || 
+              !phoneNumber || 
+              !name || 
+              !hourlyRate ||
+              (!employee && !consentVerified) // 추가 모드일 때 동의 체크 필수
+            }
+          >
+            {employee ? "저장" : "추가"}
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* 이메일 발송 확인 팝업 */}
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>안내 메일 발송 확인</AlertDialogTitle>
+            <AlertDialogDescription>
+              {email}로 개인정보 수집 출처 안내 메일이 발송됩니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={saveEmployee}>확인</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }

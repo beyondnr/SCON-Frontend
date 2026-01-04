@@ -6,7 +6,6 @@ import { OnboardingProvider, useOnboarding } from "./onboarding-context";
 import { OnboardingProgress } from "./components/onboarding-progress";
 import Step1Account from "./components/step1-account";
 import Step2Store from "./components/step2-store";
-import Step3Employees from "./components/step3-employees";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from "@/components/layout/logo";
@@ -16,7 +15,6 @@ import { CenteredLayout } from "@/components/layout/centered-layout";
 const steps = [
   { id: 1, component: Step1Account },
   { id: 2, component: Step2Store },
-  { id: 3, component: Step3Employees },
 ];
 
 function OnboardingWizard() {
@@ -73,7 +71,11 @@ function OnboardingWizard() {
             이전
           </Button>
           {currentStep < steps.length ? (
-            <Button onClick={handleNext}>다음</Button>
+            currentStep === 2 ? (
+              <Button onClick={handleFinish}>가입 완료</Button>
+            ) : (
+              <Button onClick={handleNext}>다음</Button>
+            )
           ) : (
             <Button onClick={handleFinish}>완료</Button>
           )}

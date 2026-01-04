@@ -5,13 +5,23 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/;
+
 const accountSchema = z.object({
   name: z.string().min(1, { message: "이름을 입력해주세요." }),
   email: z.string().email({ message: "올바른 이메일 형식을 입력해주세요." }),
   password: z
     .string()
-    .min(6, { message: "비밀번호는 6자 이상이어야 합니다." }),
+    .min(8, { message: "비밀번호는 8자 이상이어야 합니다." })
+    .max(20, { message: "비밀번호는 20자 이하여야 합니다." })
+    .regex(passwordRegex, { message: "영문, 숫자, 특수문자를 포함해야 합니다." }),
   passwordConfirm: z.string().min(1, { message: "비밀번호 확인을 입력해주세요." }),
+  agreedToTerms: z.boolean().refine((val) => val === true, {
+    message: "약관에 동의해주세요.",
+  }),
+  agreedToPrivacy: z.boolean().refine((val) => val === true, {
+    message: "개인정보처리방침에 동의해주세요.",
+  }),
 }).refine((data) => data.password === data.passwordConfirm, {
   message: "비밀번호가 일치하지 않습니다.",
   path: ["passwordConfirm"],
@@ -24,19 +34,9 @@ const storeSchema = z.object({
   closingTime: z.string().min(1, { message: "영업 종료 시간을 입력해주세요." }),
 });
 
-const employeeSchema = z.object({
-  name: z.string().min(1, { message: "직원 이름을 입력해주세요." }),
-  hourlyRate: z.coerce.number().min(1, { message: "시급을 입력해주세요." }),
-  role: z.string().min(1, { message: "역할을 선택해주세요." }),
-  shiftPreset: z.enum(['morning', 'afternoon', 'custom']).optional(),
-  customShiftStart: z.string().optional(),
-  customShiftEnd: z.string().optional(),
-});
-
 export const onboardingSchema = z.object({
   account: accountSchema,
   store: storeSchema,
-  employees: z.array(employeeSchema).min(1, { message: "최소 1명 이상의 직원을 등록해야 합니다." }),
 });
 
 export type OnboardingData = z.infer<typeof onboardingSchema>;
@@ -58,6 +58,8 @@ export function OnboardingProvider({ children }: PropsWithChildren) {
         email: "",
         password: "",
         passwordConfirm: "",
+        agreedToTerms: false,
+        agreedToPrivacy: false,
       },
       store: {
         name: "",
@@ -65,7 +67,6 @@ export function OnboardingProvider({ children }: PropsWithChildren) {
         openingTime: "09:00",
         closingTime: "22:00",
       },
-      employees: [{ name: "", hourlyRate: 9860, role: "직원", shiftPreset: "morning" }],
     },
     mode: "onBlur",
   });
@@ -76,8 +77,6 @@ export function OnboardingProvider({ children }: PropsWithChildren) {
         return await form.trigger("account");
       case 2:
         return await form.trigger("store");
-      case 3:
-        return await form.trigger("employees");
       default:
         return false;
     }

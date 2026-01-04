@@ -11,7 +11,7 @@ export function OnboardingProgress({
 }: OnboardingProgressProps) {
   const progressValue = (currentStep / totalSteps) * 100;
 
-  const stepLabels = ["계정 정보", "매장 정보", "직원 등록"];
+  const stepLabels = ["계정 정보", "매장 정보"];
 
   return (
     <div>
