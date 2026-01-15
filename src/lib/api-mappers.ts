@@ -121,6 +121,18 @@ export function employeeToApiFormat(employee: Partial<Employee>): ApiEmployeeReq
 
 /**
  * 백엔드 API 응답 → 프론트엔드 Employee 형식 변환
+ * 
+ * 필드명 변환:
+ * - phone → phoneNumber
+ * - hourlyWage → hourlyRate
+ * - employmentType → role (MANAGER/EMPLOYEE → 매니저/직원)
+ * - shiftPreset → shiftPreset (대문자 → 소문자)
+ * - customShiftStartTime → customShiftStart
+ * - customShiftEndTime → customShiftEnd
+ * - personalHoliday → personalHoliday (영문 요일 → 한글 요일)
+ * 
+ * 주의: color 필드는 프론트엔드에서만 사용하므로 API 응답에 포함되지 않음
+ * 컴포넌트에서 필요 시 getRandomEmployeeColor 함수로 생성
  */
 export function apiEmployeeToFrontend(apiEmployee: ApiEmployee): Employee {
   return {
@@ -136,6 +148,8 @@ export function apiEmployeeToFrontend(apiEmployee: ApiEmployee): Employee {
     personalHoliday: apiEmployee.personalHoliday 
       ? englishToDay(apiEmployee.personalHoliday)
       : '휴무 없음',
+    // color는 API 응답에 없으므로 undefined (컴포넌트에서 필요 시 생성)
+    color: undefined,
   };
 }
 
@@ -150,33 +164,63 @@ export interface ApiStore {
   id: number;
   name: string;
   businessType: string;
+  address?: string;
   openTime?: string;
   closeTime?: string;
   storeHoliday?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  ownerId: number;
+  employeeCount: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
  * 백엔드 API 매장 요청 형식 타입
+ * 
+ * 주의: API는 openTime, closeTime을 사용하지만, 프론트엔드는 openingTime, closingTime을 사용
+ * 변환 함수에서 자동으로 필드명 변환됨
  */
 export interface ApiStoreRequest {
   name: string;
   businessType: string;
-  openingTime?: string;
-  closingTime?: string;
+  openTime?: string; // API는 openTime 사용 (openingTime 아님)
+  closeTime?: string; // API는 closeTime 사용 (closingTime 아님)
   storeHoliday?: string | null;
 }
 
 /**
  * 프론트엔드 Store → 백엔드 API 요청 형식 변환
+ * 
+ * 필드명 변환:
+ * - openingTime → openTime
+ * - closingTime → closeTime
+ * - weeklyHoliday → storeHoliday (한글 요일 → 영문 요일)
+ * 
+ * 시간 형식 변환:
+ * - 프론트엔드: "HH:mm" 형식 (예: "09:00")
+ * - API: "HH:mm:ss" 형식 (예: "09:00:00")
  */
 export function storeToApiFormat(store: Store): ApiStoreRequest {
+  // 시간 형식 변환: "HH:mm" → "HH:mm:00" (이미 ":00"이 포함되어 있으면 그대로 사용)
+  const formatTimeForApi = (time: string | undefined): string | undefined => {
+    if (!time) return undefined;
+    // 이미 "HH:mm:ss" 형식인 경우 그대로 반환
+    if (time.match(/^\d{2}:\d{2}:\d{2}$/)) {
+      return time;
+    }
+    // "HH:mm" 형식인 경우 ":00" 추가
+    if (time.match(/^\d{2}:\d{2}$/)) {
+      return `${time}:00`;
+    }
+    // 그 외의 경우 그대로 반환 (백엔드에서 validation 처리)
+    return time;
+  };
+
   return {
     name: store.name,
     businessType: store.businessType,
-    openingTime: store.openingTime,
-    closingTime: store.closingTime,
+    openTime: formatTimeForApi(store.openingTime),
+    closeTime: formatTimeForApi(store.closingTime),
     storeHoliday: store.weeklyHoliday && store.weeklyHoliday !== '휴무 없음'
       ? dayToEnglish(store.weeklyHoliday)
       : null,
@@ -277,13 +321,66 @@ export interface UpdateOwnerProfileRequest {
 
 /**
  * 백엔드 스케줄 응답 타입
+ * 
+ * 참고: 백엔드 작업 계획서 확인 결과, status는 'DRAFT', 'PUBLISHED', 'ARCHIVED'를 사용
+ * 'SENT'는 사용하지 않으므로 'ARCHIVED'로 변경
  */
 export interface ApiSchedule {
   id: number;
   weekStartDate: string;
-  status: 'DRAFT' | 'PUBLISHED' | 'SENT';
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   storeId: number;
   createdAt?: string;
   updatedAt?: string;
 }
 
+/**
+ * 타입 alias (하위 호환성을 위해 유지)
+ * @deprecated ApiSchedule 사용 권장
+ */
+export type ScheduleResponseDto = ApiSchedule;
+
+/**
+ * 스케줄 상세 조회 응답 타입
+ * 백엔드 작업 계획서(`INTG-BE-Phase6-schedule-edit.md`) 참고
+ */
+export interface ScheduleDetailResponseDto {
+  id: number;
+  weekStartDate: string; // "yyyy-MM-dd" 형식
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  storeId: number;
+  shifts: ShiftDto[]; // Shift 정보 배열
+  createdAt: string; // ISO 8601 형식
+  updatedAt: string; // ISO 8601 형식
+}
+
+/**
+ * Shift 응답 타입
+ */
+export interface ShiftDto {
+  id: number; // Shift ID (필요 시 사용)
+  employeeId: number; // 직원 ID
+  date: string; // "yyyy-MM-dd" 형식
+  startTime: string; // "HH:mm:ss" 형식
+  endTime: string; // "HH:mm:ss" 형식
+}
+
+/**
+ * 스케줄 수정 요청 타입
+ * 백엔드 작업 계획서(`INTG-BE-Phase6-schedule-edit.md`) 참고
+ */
+export interface UpdateScheduleRequestDto {
+  status?: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'; // 선택적, 기본값은 DRAFT
+  shifts: ShiftRequestDto[]; // 현재 주차의 모든 Shift 정보 (Full Replace 방식)
+}
+
+/**
+ * Shift 요청 타입
+ */
+export interface ShiftRequestDto {
+  employeeId: number; // 직원 ID (필수)
+  date: string; // "yyyy-MM-dd" 형식 (필수)
+  startTime: string; // "HH:mm:ss" 형식 (필수)
+  endTime: string; // "HH:mm:ss" 형식 (필수)
+  // 주의: id 필드는 없음 (새로 생성되는 Shift는 id 불필요)
+}

@@ -32,6 +32,7 @@ const storeSchema = z.object({
   businessType: z.string().min(1, { message: "업종을 선택해주세요." }),
   openingTime: z.string().min(1, { message: "영업 시작 시간을 입력해주세요." }),
   closingTime: z.string().min(1, { message: "영업 종료 시간을 입력해주세요." }),
+  weeklyHoliday: z.string().optional(), // 정기 휴무일 (선택)
 });
 
 export const onboardingSchema = z.object({
@@ -66,6 +67,7 @@ export function OnboardingProvider({ children }: PropsWithChildren) {
         businessType: "",
         openingTime: "09:00",
         closingTime: "22:00",
+        weeklyHoliday: "휴무 없음",
       },
     },
     mode: "onBlur",

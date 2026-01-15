@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { mockEmployees } from "@/lib/mock-data";
 import { Employee, TimeRange, MonthlySchedule } from "@/lib/types";
 import { cn, formatTime, isOutsideShiftTime, getShiftWarningMessage } from "@/lib/utils";
 import { Calendar, Clock } from "lucide-react";
@@ -13,10 +12,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 interface ScheduleGridProps {
     scheduleData: MonthlySchedule['schedule'];
     dates: Date[];
+    employees: Employee[];
     onEditShift?: (employee: Employee, day: string, timeRange: TimeRange | null) => void;
 }
 
-export function ScheduleGrid({ scheduleData, dates, onEditShift }: ScheduleGridProps) {
+export function ScheduleGrid({ scheduleData, dates, employees, onEditShift }: ScheduleGridProps) {
     return (
         <TooltipProvider>
             <Card className="shadow-md">
@@ -48,7 +48,7 @@ export function ScheduleGrid({ scheduleData, dates, onEditShift }: ScheduleGridP
                             })}
 
                             {/* [Body Rows] 직원별 근무표 행 */}
-                            {mockEmployees.map(employee => (
+                            {employees.map(employee => (
                                 <div key={employee.id} className="contents">
                                     {/* 직원 정보 컬럼 (Sticky) */}
                                     <div className="bg-background p-4 text-sm font-medium sticky left-0 z-10 border-r shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] flex items-center gap-3">

@@ -58,11 +58,16 @@ apiClient.interceptors.response.use(
   (response: AxiosResponse<ApiResponse<unknown> | unknown>) => {
     // ApiResponse<T> 래퍼 처리
     // 대부분의 API는 { status, message, data, timestamp } 형식
+    // 예: { status: 201, message: "...", data: { ownerId: 1, email: "..." }, timestamp: "..." }
+    // 처리 후: response.data = { ownerId: 1, email: "..." }
+    // 따라서 컴포넌트에서는 signupResponse.data?.ownerId로 직접 접근 가능
     if (response.data && typeof response.data === 'object' && 'data' in response.data) {
       const apiResponse = response.data as ApiResponse<unknown>;
       return { ...response, data: apiResponse.data };
     }
-    // 스케줄 조회 API 등은 배열을 직접 반환
+    // 스케줄 조회 API 등은 배열을 직접 반환 (ApiResponse 래퍼 없음)
+    // 예: 월간 스케줄 조회 API는 ApiSchedule[] 배열을 직접 반환
+    // 이 경우 response.data는 이미 배열이므로 그대로 반환
     return response;
   },
   async (error: AxiosError<ApiError | string>) => {

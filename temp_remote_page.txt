@@ -1,0 +1,94 @@
+﻿"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { OnboardingProvider, useOnboarding } from "./onboarding-context";
+import { OnboardingProgress } from "./components/onboarding-progress";
+import Step1Account from "./components/step1-account";
+import Step2Store from "./components/step2-store";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { Logo } from "@/components/layout/logo";
+import { Form } from "@/components/ui/form";
+import { CenteredLayout } from "@/components/layout/centered-layout";
+
+const steps = [
+  { id: 1, component: Step1Account },
+  { id: 2, component: Step2Store },
+];
+
+function OnboardingWizard() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const { form, formData, validateAndGoNext } = useOnboarding();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleNext = async () => {
+    const isValid = await validateAndGoNext(currentStep);
+    if (isValid) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    setCurrentStep((prev) => prev - 1);
+  };
+
+  const handleFinish = async () => {
+    const isValid = await form.trigger();
+    if (isValid) {
+      console.log("Onboarding complete:", JSON.stringify(formData, null, 2));
+      toast({
+        title: "온보딩 완료!",
+        description: "매장 설정이 완료되었습니다. 대시보드로 이동합니다.",
+        variant: "default",
+      });
+      router.push("/dashboard");
+    }
+  };
+
+  const CurrentStepComponent = steps.find((s) => s.id === currentStep)
+    ?.component as React.ElementType;
+
+  return (
+    <CenteredLayout maxWidth="2xl">
+      <div className="mb-8 flex justify-center">
+        <Logo />
+      </div>
+      <div className="bg-card p-6 md:p-8 rounded-xl shadow-lg">
+        <OnboardingProgress currentStep={currentStep} totalSteps={steps.length} />
+        <Form {...form}>
+          <form onSubmit={(e) => e.preventDefault()} className="mt-8">
+            <CurrentStepComponent />
+          </form>
+        </Form>
+        <div className="mt-8 flex justify-between">
+          <Button
+            variant="outline"
+            onClick={handlePrev}
+            disabled={currentStep === 1}
+          >
+            이전
+          </Button>
+          {currentStep < steps.length ? (
+            currentStep === 2 ? (
+              <Button onClick={handleFinish}>가입 완료</Button>
+            ) : (
+              <Button onClick={handleNext}>다음</Button>
+            )
+          ) : (
+            <Button onClick={handleFinish}>완료</Button>
+          )}
+        </div>
+      </div>
+    </CenteredLayout>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <OnboardingProvider>
+      <OnboardingWizard />
+    </OnboardingProvider>
+  );
+}
