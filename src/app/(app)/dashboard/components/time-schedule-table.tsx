@@ -8,7 +8,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { mockEmployees } from "@/lib/mock-data";
 import { Employee, TimeRange, MonthlySchedule } from "@/lib/types";
 import { Clock, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
@@ -18,11 +17,12 @@ import { parseMinutes, isOutsideShiftTime, getShiftWarningMessage } from "@/lib/
 interface TimeScheduleTableProps {
   scheduleData: MonthlySchedule['schedule'];
   dates: Date[];
+  employees: Employee[];
   onEditShift?: (employee: Employee, day: string, timeRange: TimeRange | null) => void;
   onAddShift?: (day: string, time: string) => void;
 }
 
-export function TimeScheduleTable({ scheduleData, dates, onEditShift, onAddShift }: TimeScheduleTableProps) {
+export function TimeScheduleTable({ scheduleData, dates, employees, onEditShift, onAddShift }: TimeScheduleTableProps) {
   // 09:00 ~ 22:00 (1시간 단위)
   const hours = Array.from({ length: 14 }, (_, i) => i + 9);
 
@@ -107,7 +107,7 @@ export function TimeScheduleTable({ scheduleData, dates, onEditShift, onAddShift
                     const dailySchedule = scheduleData[dateKey] || {};
 
                     // Find employees working at this hour on this day
-                    const workingEmployees = mockEmployees.filter((emp) => {
+                    const workingEmployees = employees.filter((emp) => {
                       const timeRange = dailySchedule[emp.id];
                       if (!timeRange) return false;
                       return isWorking(hour, timeRange.start, timeRange.end);

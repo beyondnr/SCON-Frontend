@@ -10,8 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MonthlyCalendarView } from "./monthly-calendar-view";
-import { MonthlySchedule } from "@/lib/types";
-import { mockEmployees } from "@/lib/mock-data";
+import { MonthlySchedule, Employee } from "@/lib/types";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -23,6 +22,7 @@ interface SendScheduleDialogProps {
   onSend: () => void;
   currentDate: Date;
   monthlySchedule: MonthlySchedule;
+  employees: Employee[];
 }
 
 export function SendScheduleDialog({
@@ -31,9 +31,10 @@ export function SendScheduleDialog({
   onSend,
   currentDate,
   monthlySchedule,
+  employees,
 }: SendScheduleDialogProps) {
   // 근무가 있는 직원 필터링 및 근무일수 계산
-  const scheduledEmployees = mockEmployees.filter(emp => {
+  const scheduledEmployees = employees.filter(emp => {
     // 해당 월에 근무가 하나라도 있는지 확인
     return Object.values(monthlySchedule.schedule).some(daily => daily[emp.id]);
   }).map(emp => {
@@ -58,7 +59,7 @@ export function SendScheduleDialog({
             {/* 캘린더 미리보기 */}
             <div>
               <h3 className="text-sm font-semibold mb-2">근무표 미리보기</h3>
-              <MonthlyCalendarView currentDate={currentDate} scheduleData={monthlySchedule.schedule} />
+              <MonthlyCalendarView currentDate={currentDate} scheduleData={monthlySchedule.schedule} employees={employees} />
             </div>
 
             {/* 발송 대상 목록 */}

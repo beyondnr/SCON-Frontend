@@ -66,6 +66,29 @@ export default function MyPage() {
     if (!profile) return;
 
     // 유효성 검증
+    // name 필드 검증: API 명세서에 따르면 "Request에 포함된 경우, 빈 문자열이 아니어야 함"
+    // 현재 formData.name에 값이 있으면 (변경된 경우) 빈 문자열 검증 수행
+    const nameChanged = formData.name !== (profile.name || "");
+    if (nameChanged && formData.name.trim() === "") {
+      toast({
+        title: "입력 오류",
+        description: "이름은 빈 값일 수 없습니다.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // name 필드 최대 길이 검증 (100자)
+    if (formData.name && formData.name.length > 100) {
+      toast({
+        title: "입력 오류",
+        description: "이름은 최대 100자까지 입력 가능합니다.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // 전화번호 형식 검증
     if (formData.phone && !/^010-\d{4}-\d{4}$/.test(formData.phone)) {
       toast({
         title: "입력 오류",
@@ -78,10 +101,22 @@ export default function MyPage() {
     try {
       setIsSaving(true);
       const updateData: UpdateOwnerProfileRequest = {};
-      if (formData.name !== (profile.name || "")) {
-        updateData.name = formData.name || undefined;
+      
+      // name 필드: 변경된 경우에만 포함, 빈 문자열이 아닌 경우만 포함
+      if (nameChanged) {
+        const trimmedName = formData.name.trim();
+        // 빈 문자열이 아닌 경우에만 포함 (이미 위에서 검증했지만 안전하게 처리)
+        if (trimmedName !== "") {
+          updateData.name = trimmedName;
+        } else {
+          // 빈 문자열인 경우 undefined로 설정하여 API 요청에서 제외
+          // (하지만 위에서 이미 검증했으므로 이 부분은 실행되지 않음)
+          updateData.name = undefined;
+        }
       }
+      
       if (formData.phone !== (profile.phone || "")) {
+        // 전화번호가 빈 문자열인 경우 null로 변환 (백엔드에서 null로 처리)
         updateData.phone = formData.phone || undefined;
       }
 
@@ -174,34 +209,39 @@ export default function MyPage() {
           <CardTitle>회원 정보</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* 이메일 (읽기 전용) */}
-          <div className="space-y-2">
-            <Label>이메일 주소</Label>
-            <Input
-              value={profile.email}
-              disabled
-              className="bg-muted text-muted-foreground"
-            />
-            <p className="text-xs text-muted-foreground">
-              이메일은 변경할 수 없습니다.
-            </p>
-          </div>
+          <fieldset disabled={isSaving}>
+            {/* 이메일 (읽기 전용) */}
+            <div className="space-y-2">
+              <Label>이메일 주소</Label>
+              <Input
+                value={profile.email}
+                disabled
+                className="bg-muted text-muted-foreground"
+              />
+              <p className="text-xs text-muted-foreground">
+                이메일은 변경할 수 없습니다.
+              </p>
+            </div>
 
           {/* 이름 */}
           <div className="space-y-2">
-            <Label htmlFor="name">
-              이름 <span className="text-muted-foreground">(선택)</span>
-            </Label>
+            <Label htmlFor="name">이름</Label>
             {isEditing ? (
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="이름을 입력하세요"
-                maxLength={100}
-              />
+              <>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  placeholder="이름을 입력하세요"
+                  maxLength={100}
+                  disabled={isSaving}
+                />
+                <p className="text-xs text-muted-foreground">
+                  최대 100자까지 입력 가능합니다. 수정 시 빈 값은 저장되지 않습니다.
+                </p>
+              </>
             ) : (
               <div className="flex items-center justify-between p-2 border rounded-md bg-background">
                 <span className={formData.name ? "" : "text-muted-foreground"}>
@@ -224,6 +264,7 @@ export default function MyPage() {
                   onChange={handlePhoneChange}
                   placeholder="010-1234-5678"
                   maxLength={13}
+                  disabled={isSaving}
                 />
                 <p className="text-xs text-muted-foreground">
                   010-XXXX-XXXX 형식으로 입력해주세요.
@@ -237,6 +278,7 @@ export default function MyPage() {
               </div>
             )}
           </div>
+          </fieldset>
 
           {/* 액션 버튼 */}
           <div className="flex gap-2 pt-4">

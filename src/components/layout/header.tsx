@@ -7,7 +7,8 @@ export function AppHeader() {
       <div className="container flex h-16 items-center">
         <Logo />
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-6">
+          {/* 모바일에서는 하단 네비게이션 사용, 데스크탑에서만 상단 네비게이션 표시 */}
+          <nav className="hidden md:flex items-center space-x-6">
             <NavLinks />
           </nav>
         </div>

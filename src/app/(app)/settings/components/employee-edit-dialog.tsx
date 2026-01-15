@@ -7,16 +7,22 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Employee, EmployeeRole, ShiftPreset } from "@/lib/types";
+import { ApiEmployee, ApiEmployeeRequest, employeeToApiFormat, apiEmployeeToFrontend } from "@/lib/api-mappers";
 import { SHIFT_PRESETS } from "@/lib/constants";
 import { getRandomEmployeeColor } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import apiClient from "@/lib/api-client";
+import { getCurrentStoreId } from "@/lib/local-storage-utils";
+import { useToast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
+import { Loader2 } from "lucide-react";
 
 interface EmployeeEditDialogProps {
   isOpen: boolean;
   onClose: () => void;
   employee?: Employee | null; // If null, it's add mode
   existingEmployees?: Employee[]; // To check for duplicate colors
-  onSave: (employee: Employee) => void;
+  onSave: () => void; // 직원 목록 새로고침 콜백
 }
 
 // 30분 단위 시간 옵션 생성
@@ -39,10 +45,12 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
   const [customStart, setCustomStart] = useState("09:00");
   const [customEnd, setCustomEnd] = useState("18:00");
 
+  const { toast } = useToast();
   const [emailError, setEmailError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [consentVerified, setConsentVerified] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -137,6 +145,16 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
   };
 
   const handleSave = () => {
+    // 유효성 검증
+    if (!name || name.trim() === "") {
+      toast({
+        title: "입력 오류",
+        description: "이름을 입력해주세요.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!validateEmail(email)) {
       return;
     }
@@ -154,35 +172,98 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
     saveEmployee();
   };
 
-  const saveEmployee = () => {
-    const usedColors = existingEmployees
-      .map(e => e.color)
-      .filter((c): c is string => !!c);
-
-    const newEmployee: Employee = {
-      id: employee?.id || `emp-${Date.now()}`, // Generate simple ID for new employee
-      name,
-      email,
-      phoneNumber,
-      role,
-      hourlyRate: parseInt(hourlyRate) || 0,
-      avatarUrl: employee?.avatarUrl, // Keep existing avatar or let it be undefined
-      color: employee?.color || getRandomEmployeeColor(usedColors), // Use existing or generate new unique color
-      
-      // 근무 시간 설정 저장
-      shiftPreset,
-      customShiftStart: shiftPreset === 'custom' ? customStart : undefined,
-      customShiftEnd: shiftPreset === 'custom' ? customEnd : undefined,
-    };
-    
-    // 이메일 발송 로그 (Mock)
-    if (!employee && email) {
-      console.log(`[Mock] 안내 메일 발송: ${email}로 개인정보 수집 출처 안내 메일이 발송되었습니다.`);
+  const saveEmployee = async () => {
+    const storeId = getCurrentStoreId();
+    if (!storeId) {
+      toast({
+        title: "오류",
+        description: "매장 정보를 찾을 수 없습니다.",
+        variant: "destructive",
+      });
+      return;
     }
-    
-    onSave(newEmployee);
-    setShowConfirmDialog(false);
-    onClose();
+
+    try {
+      setIsSaving(true);
+
+      // 프론트엔드 Employee 형식으로 구성
+      // 주의: color는 프론트엔드에서만 사용하므로 API 요청에는 포함되지 않음
+      const usedColors = existingEmployees
+        .map(e => e.color)
+        .filter((c): c is string => !!c);
+
+      const employeeData: Employee = {
+        id: employee?.id || `temp-${Date.now()}`, // 임시 ID (등록 시 API 응답에서 받음)
+        name,
+        email,
+        phoneNumber,
+        role,
+        hourlyRate: parseInt(hourlyRate) || 0,
+        avatarUrl: employee?.avatarUrl,
+        color: employee?.color || getRandomEmployeeColor(usedColors), // 프론트엔드에서만 사용
+        shiftPreset,
+        customShiftStart: shiftPreset === 'custom' ? customStart : undefined,
+        customShiftEnd: shiftPreset === 'custom' ? customEnd : undefined,
+        personalHoliday: undefined, // 현재 폼에 없음 (Phase 4 범위 밖)
+      };
+
+      // 프론트엔드 Employee 타입 → API ApiEmployeeRequest 타입 변환
+      // phoneNumber → phone, hourlyRate → hourlyWage, role → employmentType 자동 변환됨
+      const apiRequest = employeeToApiFormat(employeeData);
+
+      if (employee) {
+        // 수정 API 호출
+        // 주의: 프론트엔드 Employee.id는 string이지만, API는 number를 요구함
+        const employeeId = parseInt(employee.id);
+        if (isNaN(employeeId)) {
+          throw new Error("유효하지 않은 직원 ID입니다.");
+        }
+
+        const response = await apiClient.put<ApiEmployee>(
+          `/v1/employees/${employeeId}`,
+          apiRequest
+        );
+
+        // 이메일 발송 로그는 실제로 백엔드에서 처리될 것으로 예상
+        if (response.data && email) {
+          logger.debug("Employee updated successfully", { employeeId, email });
+        }
+
+        toast({
+          title: "수정 완료",
+          description: "직원 정보가 수정되었습니다.",
+        });
+      } else {
+        // 등록 API 호출
+        const response = await apiClient.post<ApiEmployee>(
+          `/v1/stores/${storeId}/employees`,
+          apiRequest
+        );
+
+        // 이메일 발송 로그는 실제로 백엔드에서 처리될 것으로 예상
+        if (response.data && email) {
+          logger.debug("Employee created successfully", { 
+            employeeId: response.data.id, 
+            email 
+          });
+        }
+
+        toast({
+          title: "등록 완료",
+          description: "직원이 등록되었습니다.",
+        });
+      }
+
+      // 직원 목록 새로고침
+      onSave();
+      setShowConfirmDialog(false);
+      onClose();
+    } catch (error) {
+      // 에러는 apiClient 인터셉터에서 자동으로 Toast 표시됨
+      logger.error("[EmployeeEditDialog] Failed to save employee:", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -198,7 +279,7 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
               : "새로운 직원을 추가합니다."}
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-6 py-4">
+        <fieldset disabled={isSaving} className="grid gap-6 py-4">
           {/* 기본 정보 섹션 */}
           <div className="grid gap-4">
             <h3 className="text-sm font-semibold text-muted-foreground">기본 정보</h3>
@@ -341,12 +422,15 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
               </div>
             </div>
           )}
-        </div>
+        </fieldset>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>취소</Button>
+          <Button variant="outline" onClick={onClose} disabled={isSaving}>
+            취소
+          </Button>
           <Button 
             onClick={handleSave} 
             disabled={
+              isSaving ||
               !!emailError || 
               !!phoneError || 
               !email || 
@@ -356,7 +440,14 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
               (!employee && !consentVerified) // 추가 모드일 때 동의 체크 필수
             }
           >
-            {employee ? "저장" : "추가"}
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                {employee ? "저장 중..." : "추가 중..."}
+              </>
+            ) : (
+              employee ? "저장" : "추가"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -371,8 +462,17 @@ export function EmployeeEditDialog({ isOpen, onClose, employee, existingEmployee
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={saveEmployee}>확인</AlertDialogAction>
+            <AlertDialogCancel disabled={isSaving}>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={saveEmployee} disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  처리 중...
+                </>
+              ) : (
+                "확인"
+              )}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

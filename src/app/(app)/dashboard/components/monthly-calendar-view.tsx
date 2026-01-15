@@ -6,8 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { mockEmployees } from "@/lib/mock-data";
-import { MonthlySchedule } from "@/lib/types";
+import { MonthlySchedule, Employee } from "@/lib/types";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth } from "date-fns";
 import { ko } from "date-fns/locale";
 import { getShiftWarningMessage, isOutsideShiftTime } from "@/lib/utils";
@@ -15,9 +14,10 @@ import { getShiftWarningMessage, isOutsideShiftTime } from "@/lib/utils";
 interface MonthlyCalendarViewProps {
   currentDate: Date;
   scheduleData: MonthlySchedule['schedule'];
+  employees: Employee[];
 }
 
-export function MonthlyCalendarView({ currentDate, scheduleData }: MonthlyCalendarViewProps) {
+export function MonthlyCalendarView({ currentDate, scheduleData, employees }: MonthlyCalendarViewProps) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); // 일요일 시작
@@ -47,7 +47,7 @@ export function MonthlyCalendarView({ currentDate, scheduleData }: MonthlyCalend
           const dailySchedule = scheduleData[dateKey] || {};
           
           // 근무자 찾기
-          const workingEmployees = mockEmployees.filter(emp => dailySchedule[emp.id]);
+          const workingEmployees = employees.filter(emp => dailySchedule[emp.id]);
 
           return (
             <div 

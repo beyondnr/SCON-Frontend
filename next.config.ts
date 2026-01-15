@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true, // ESLint 에러는 추후 수정 예정
   },
+  compiler: {
+    // 프로덕션 빌드에서 console.log, console.info, console.debug 제거
+    // console.error와 console.warn은 유지 (에러 추적용)
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
   images: {
     remotePatterns: [
       {
@@ -53,6 +60,20 @@ const nextConfig: NextConfig = {
       {
         source: '/:path*',
         headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js 필요
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Tailwind CSS 및 Google Fonts 필요
+              "img-src 'self' data: https: placehold.co images.unsplash.com picsum.photos api.dicebear.com", // 이미지 소스 허용
+              "font-src 'self' data: https://fonts.gstatic.com", // 폰트 소스 허용
+              "connect-src 'self' http://localhost:8080 https://localhost:8080 https://api.lawfulshift.com", // API 연결 허용
+              "frame-ancestors 'none'", // iframe 임베드 방지
+              "base-uri 'self'", // base 태그 URI 제한
+              "form-action 'self'", // 폼 액션 제한
+            ].join('; '),
+          },
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on',
