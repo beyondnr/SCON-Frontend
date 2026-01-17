@@ -13,16 +13,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Wand2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AutoFillButtonProps {
   onAutoFill: () => void;
+  className?: string;
 }
 
-export function AutoFillButton({ onAutoFill }: AutoFillButtonProps) {
+export function AutoFillButton({ onAutoFill, className }: AutoFillButtonProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className={cn("gap-2", className)}>
           <Wand2 className="h-4 w-4" />
           자동 채우기
         </Button>
