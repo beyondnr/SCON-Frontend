@@ -8,10 +8,12 @@
  */
 
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { ulid } from 'ulid';
 import { toast } from '@/hooks/use-toast';
 import { clearAuthTokens } from './local-storage-utils';
 import { getUserFriendlyMessage } from './error-messages';
 import { clientEnv } from './env';
+import { logRequest, logResponse, logError } from './apiLogger';
 import type { ApiResponse, ApiError, FieldError } from './types';
 
 // API 클라이언트 인스턴스 생성
@@ -44,6 +46,21 @@ function isPublicPath(url: string | undefined): boolean {
 // 공개 API의 경우에도 쿠키는 전송되지만, 백엔드에서 무시하므로 문제없음
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    // 요청 시작 시간 저장 (응답 시간 계산용)
+    (config as any)._startTime = Date.now();
+    
+    // ULID 기반 Request ID 생성 및 헤더 추가
+    // ULID는 시간 정보를 포함하므로 정렬에 유리함
+    const requestId = ulid();
+    // 헤더 설정 (타입 안정성을 위해 set 메서드 사용)
+    config.headers.set('X-Request-ID', requestId);
+    
+    // Request ID를 config에 저장 (로깅 시 사용)
+    (config as any)._requestId = requestId;
+    
+    // API 요청 로깅 (Request ID가 포함된 config 전달)
+    logRequest(config);
+    
     // HttpOnly Cookie는 withCredentials: true로 자동 전송됨
     // Authorization 헤더는 백엔드에서 쿠키를 읽어 처리하므로 프론트엔드에서 설정 불필요
     return config;
@@ -56,6 +73,13 @@ apiClient.interceptors.request.use(
 // 응답 인터셉터: API 응답 형식 처리 및 에러 처리
 apiClient.interceptors.response.use(
   (response: AxiosResponse<ApiResponse<unknown> | unknown>) => {
+    // 응답 시간 계산
+    const startTime = (response.config as any)._startTime;
+    const duration = startTime ? Date.now() - startTime : 0;
+    
+    // API 응답 로깅
+    logResponse(response, duration);
+    
     // ApiResponse<T> 래퍼 처리
     // 대부분의 API는 { status, message, data, timestamp } 형식
     // 예: { status: 201, message: "...", data: { ownerId: 1, email: "..." }, timestamp: "..." }
@@ -71,6 +95,18 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error: AxiosError<ApiError | string>) => {
+    // 응답 시간 계산 (가능한 경우)
+    const startTime = error.config ? (error.config as any)._startTime : undefined;
+    const duration = startTime ? Date.now() - startTime : undefined;
+    
+    // API 에러 로깅 (try-catch로 보호하여 로깅 실패가 에러 처리에 영향 없도록)
+    try {
+      logError(error, duration);
+    } catch (logError) {
+      // 로깅 실패 시에도 기존 에러 처리 로직은 정상 실행
+      console.error('[API Logger Error] Failed to log error:', logError);
+    }
+    
     const status = error.response?.status;
     const responseData = error.response?.data as ApiError | string | undefined;
     
@@ -120,6 +156,7 @@ apiClient.interceptors.response.use(
             {
               headers: {
                 'Content-Type': 'application/json',
+                'X-Request-ID': ulid(), // 토큰 갱신 요청에도 Request ID 추가
               },
               withCredentials: true, // 쿠키 자동 전송
             }

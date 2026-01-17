@@ -17,6 +17,11 @@ const clientEnvSchema = z.object({
     .string()
     .url('NEXT_PUBLIC_API_BASE_URL은 유효한 URL이어야 합니다.')
     .default('http://localhost:8080'),
+  // API 로깅 환경 변수 추가 (optional)
+  NEXT_PUBLIC_ENABLE_API_REQUEST_LOGGING: z.string().optional(),
+  NEXT_PUBLIC_ENABLE_API_RESPONSE_LOGGING: z.string().optional(),
+  // API Logger (console.group 기반) 환경 변수
+  NEXT_PUBLIC_ENABLE_API_LOGGING: z.string().optional(),
 });
 
 /**
@@ -52,6 +57,9 @@ export function getClientEnv(): ClientEnv {
   try {
     return clientEnvSchema.parse({
       NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+      NEXT_PUBLIC_ENABLE_API_REQUEST_LOGGING: process.env.NEXT_PUBLIC_ENABLE_API_REQUEST_LOGGING,
+      NEXT_PUBLIC_ENABLE_API_RESPONSE_LOGGING: process.env.NEXT_PUBLIC_ENABLE_API_RESPONSE_LOGGING,
+      NEXT_PUBLIC_ENABLE_API_LOGGING: process.env.NEXT_PUBLIC_ENABLE_API_LOGGING,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
