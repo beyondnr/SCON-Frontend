@@ -384,3 +384,38 @@ export interface ShiftRequestDto {
   endTime: string; // "HH:mm:ss" 형식 (필수)
   // 주의: id 필드는 없음 (새로 생성되는 Shift는 id 불필요)
 }
+
+// ============================================
+// 비동기 작업 (Async Task) 관련 타입
+// ============================================
+
+/**
+ * 비동기 작업 응답 타입
+ * 
+ * 백엔드 비동기 처리 시스템에서 사용하는 작업 상태 조회 응답 타입
+ */
+export interface AsyncTaskResponseDto {
+  taskId: string;
+  status: 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+  taskType?: string;
+  progress?: number; // 0-100
+  estimatedRemainingTime?: number; // milliseconds
+  estimatedCompletionTime?: string; // ISO 8601
+  error?: {
+    code: string;
+    message: string;
+  };
+  completedAt?: string;
+  failedAt?: string;
+}
+
+/**
+ * 비동기 작업 요청 응답 타입 (202 Accepted)
+ * 
+ * 비동기 API 호출 시 즉시 반환되는 응답 타입
+ */
+export interface AsyncTaskAcceptResponseDto {
+  taskId: string;
+  status: 'IN_PROGRESS';
+  estimatedCompletionTime: string;
+}

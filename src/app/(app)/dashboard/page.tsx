@@ -27,6 +27,7 @@ import { mockPayrolls } from "@/lib/mock-data";
 import { DASHBOARD_CONSTANTS, getEmptyStateMessage } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
 import { RefreshCw, Copy, Mail, Pencil, Check, Save, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-is-mobile";
@@ -95,6 +96,8 @@ export default function DashboardPage() {
         saveSchedule,
         isLoading: isScheduleLoading,
         isSaving: isScheduleSaving,
+        taskStatus,
+        isPolling,
     } = useMonthlySchedule();
 
     const {
@@ -315,11 +318,7 @@ export default function DashboardPage() {
 
         try {
             await saveSchedule(monthlySchedule, scheduleId, weekStartDate);
-            
-            toast({
-                title: "저장 완료",
-                description: "스케줄이 저장되었습니다.",
-            });
+            // 성공 메시지는 Hook의 fetchTaskResultAndUpdateSchedule에서 표시됨
         } catch (error) {
             // 에러는 apiClient 인터셉터에서 자동으로 Toast 표시됨
             console.error("[Dashboard] Failed to save schedule:", error);
@@ -557,14 +556,24 @@ export default function DashboardPage() {
 
             {/* 저장 버튼 (수정된 경우에만 표시) */}
             {isModified && (
-                <div className="fixed bottom-4 right-4 z-50">
+                <div className="fixed bottom-4 right-4 z-50 space-y-2">
+                    {/* 진행 상태 표시 (폴링 중일 때만) */}
+                    {isPolling && taskStatus && (
+                        <div className="bg-background border rounded-lg p-3 shadow-lg min-w-[200px]">
+                            <Progress value={taskStatus.progress || 0} className="mb-2" />
+                            <p className="text-sm text-muted-foreground">
+                                스케줄을 저장하는 중... ({taskStatus.progress || 0}%)
+                            </p>
+                        </div>
+                    )}
+                    
                     <Button
                         onClick={handleSaveSchedule}
-                        disabled={isScheduleSaving || isScheduleLoading}
+                        disabled={isScheduleSaving || isScheduleLoading || isPolling}
                         size="lg"
                         className="shadow-lg"
                     >
-                        {isScheduleSaving ? (
+                        {isScheduleSaving || isPolling ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 저장 중...

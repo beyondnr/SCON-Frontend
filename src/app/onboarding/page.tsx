@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { OnboardingProvider, useOnboarding } from "./onboarding-context";
@@ -8,14 +8,17 @@ import { OnboardingProgress } from "./components/onboarding-progress";
 import Step1Account from "./components/step1-account";
 import Step2Store from "./components/step2-store";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from "@/components/layout/logo";
 import { Form } from "@/components/ui/form";
 import { CenteredLayout } from "@/components/layout/centered-layout";
 import apiClient from "@/lib/api-client";
-import { SignupResponse, ApiStore } from "@/lib/api-mappers";
+import { SignupResponse, ApiStore, AsyncTaskResponseDto } from "@/lib/api-mappers";
 import { setCurrentStoreId } from "@/lib/local-storage-utils";
 import { logger } from "@/lib/logger";
+import { useAsyncTask } from "@/hooks/use-async-task";
+import { useAsyncTaskResult } from "@/hooks/use-async-task-result";
 
 const steps = [
   { id: 1, component: Step1Account },
@@ -28,6 +31,51 @@ function OnboardingWizard() {
   const { form, formData, validateAndGoNext } = useOnboarding();
   const router = useRouter();
   const { toast } = useToast();
+
+  // 비동기 작업 관리
+  const { startPolling, stopPolling, taskStatus, isPolling } = useAsyncTask({
+    pollInterval: 1000,
+    maxPollingTime: 30000,
+    onComplete: async (status: AsyncTaskResponseDto) => {
+      // 작업 완료 시 결과 조회 및 대시보드 이동
+      await fetchStoreResultAndNavigate(status.taskId);
+    },
+    onError: (error) => {
+      setIsLoading(false);
+      // 에러는 apiClient 인터셉터에서 자동으로 Toast 표시됨
+    },
+  });
+
+  const { fetchTaskResult } = useAsyncTaskResult<ApiStore>();
+
+  /**
+   * 매장 생성 결과 조회 및 대시보드 이동
+   */
+  const fetchStoreResultAndNavigate = useCallback(async (taskId: string) => {
+    try {
+      const storeResult = await fetchTaskResult(taskId);
+      
+      // 매장 ID 저장
+      if (storeResult?.id) {
+        setCurrentStoreId(String(storeResult.id));
+        logger.debug("Store created and ID saved", { 
+          storeId: storeResult.id 
+        });
+      }
+      
+      toast({
+        title: "온보딩 완료!",
+        description: "매장 설정이 완료되었습니다. 대시보드로 이동합니다.",
+        variant: "default",
+      });
+      
+      // 대시보드로 이동
+      router.push("/dashboard");
+    } catch (error) {
+      logger.error("Onboarding error", error);
+      setIsLoading(false);
+    }
+  }, [fetchTaskResult, toast, router]);
 
   const handleNext = async () => {
     const isValid = await validateAndGoNext(currentStep);
@@ -83,24 +131,22 @@ function OnboardingWizard() {
         storeHoliday: undefined, // 온보딩에서 휴무일 입력 없음
       };
 
-      const storeResponse = await apiClient.post<ApiStore>('/v1/stores', storeData);
-      
-      // 매장 ID 저장
-      if (storeResponse.data?.id) {
-        setCurrentStoreId(String(storeResponse.data.id));
-        logger.debug("Store created and ID saved", { 
-          storeId: storeResponse.data.id 
-        });
-      }
+      // 2. 매장 생성 API 호출 (비동기: POST /v1/stores/async)
+      const storeResponse = await apiClient.post<AsyncTaskResponseDto>(
+        '/v1/stores/async',
+        storeData
+      );
 
+      const taskId = storeResponse.data.taskId;
+
+      // 즉시 피드백
       toast({
-        title: "온보딩 완료!",
-        description: "매장 설정이 완료되었습니다. 대시보드로 이동합니다.",
-        variant: "default",
+        title: '매장 생성 시작',
+        description: '매장 정보를 저장하는 중입니다.',
       });
 
-      // 대시보드로 이동
-      router.push("/dashboard");
+      // 폴링 시작 (완료 시 자동으로 대시보드 이동)
+      await startPolling(taskId);
     } catch (error) {
       // 에러는 apiClient 인터셉터에서 자동으로 Toast 표시됨
       logger.error("Onboarding error", error);
@@ -126,11 +172,21 @@ function OnboardingWizard() {
             </fieldset>
           </form>
         </Form>
+        {/* 진행 상태 표시 (폴링 중일 때만) */}
+        {isPolling && taskStatus && (
+          <div className="mt-6 space-y-2">
+            <Progress value={taskStatus.progress || 0} />
+            <p className="text-sm text-muted-foreground text-center">
+              매장 정보를 저장하는 중... ({taskStatus.progress || 0}%)
+            </p>
+          </div>
+        )}
+
         <div className="mt-8 flex justify-between">
           <Button
             variant="outline"
             onClick={handlePrev}
-            disabled={currentStep === 1 || isLoading}
+            disabled={currentStep === 1 || isLoading || isPolling}
           >
             이전
           </Button>
@@ -138,9 +194,9 @@ function OnboardingWizard() {
             currentStep === 2 ? (
               <Button 
                 onClick={handleFinish}
-                disabled={isLoading || currentStep !== 2}
+                disabled={isLoading || isPolling || currentStep !== 2}
               >
-                {isLoading ? (
+                {(isLoading || isPolling) ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     가입 중...
@@ -160,9 +216,9 @@ function OnboardingWizard() {
           ) : (
             <Button 
               onClick={handleFinish}
-              disabled={isLoading}
+              disabled={isLoading || isPolling}
             >
-              {isLoading ? (
+              {(isLoading || isPolling) ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   완료 중...
