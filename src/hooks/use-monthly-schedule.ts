@@ -18,9 +18,12 @@ import {
   ScheduleDetailResponseDto, 
   UpdateScheduleRequestDto,
   ShiftDto,
-  ShiftRequestDto
+  ShiftRequestDto,
+  AsyncTaskResponseDto
 } from '@/lib/api-mappers';
 import { logger } from '@/lib/logger';
+import { useAsyncTask } from '@/hooks/use-async-task';
+import { useAsyncTaskResult } from '@/hooks/use-async-task-result';
 
 interface Week {
   dates: Date[];
@@ -46,6 +49,23 @@ export function useMonthlySchedule(initialSchedule?: MonthlySchedule) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  // 비동기 작업 관리
+  const { startPolling, stopPolling, taskStatus, isPolling } = useAsyncTask({
+    pollInterval: 1000,
+    maxPollingTime: 30000,
+    onComplete: async (status: AsyncTaskResponseDto) => {
+      // 작업 완료 시 결과 조회
+      await fetchTaskResultAndUpdateSchedule(status.taskId);
+    },
+    onError: (error) => {
+      setError(error);
+      setIsSaving(false);
+      // 에러는 apiClient 인터셉터에서 자동으로 Toast 표시됨
+    },
+  });
+
+  const { fetchTaskResult } = useAsyncTaskResult<ScheduleDetailResponseDto>();
 
   /**
    * 특정 날짜의 스케줄 업데이트
@@ -335,7 +355,42 @@ export function useMonthlySchedule(initialSchedule?: MonthlySchedule) {
   }, []);
 
   /**
-   * 스케줄 저장 (현재 주차의 스케줄만 저장)
+   * 작업 결과 조회 및 스케줄 업데이트
+   */
+  const fetchTaskResultAndUpdateSchedule = useCallback(async (taskId: string) => {
+    try {
+      const result = await fetchTaskResult(taskId);
+      
+      // 서버 상태 반영 (현재 주차의 스케줄만 업데이트)
+      const convertedSchedule = convertScheduleDetailToMonthlySchedule(result);
+      
+      // 기존 스케줄에 현재 주차의 스케줄만 병합
+      setMonthlySchedule((prev) => ({
+        ...prev,
+        schedule: {
+          ...prev.schedule,
+          ...convertedSchedule.schedule, // 현재 주차의 스케줄만 병합
+        },
+        isModifiedAfterSent: false, // 저장 완료 후 수정 상태 초기화
+      }));
+      
+      setIsSaving(false);
+      
+      toast({
+        title: '저장 완료',
+        description: '스케줄이 성공적으로 저장되었습니다.',
+      });
+    } catch (error) {
+      console.error("[useMonthlySchedule] Failed to fetch task result:", error);
+      setError(error as Error);
+      setIsSaving(false);
+    }
+  }, [fetchTaskResult, toast]);
+
+  /**
+   * 스케줄 저장 (비동기)
+   * 
+   * 비동기 API를 사용하여 스케줄을 저장하고, 폴링을 통해 작업 완료를 기다립니다.
    */
   const saveSchedule = useCallback(async (
     schedule: MonthlySchedule,
@@ -361,34 +416,31 @@ export function useMonthlySchedule(initialSchedule?: MonthlySchedule) {
         weeklySchedules
       );
 
-      const response = await apiClient.put<ScheduleDetailResponseDto>(
-        `/v1/schedules/${scheduleId}`,
+      // 비동기 API 호출 (PUT /v1/schedules/{id}/async)
+      const response = await apiClient.put<AsyncTaskResponseDto>(
+        `/v1/schedules/${scheduleId}/async`,
         updateRequest
       );
 
-      // 성공 시 서버 상태 반영 (현재 주차의 스케줄만 업데이트)
-      const convertedSchedule = convertScheduleDetailToMonthlySchedule(
-        response.data
-      );
-      
-      // 기존 스케줄에 현재 주차의 스케줄만 병합
-      setMonthlySchedule((prev) => ({
-        ...prev,
-        schedule: {
-          ...prev.schedule,
-          ...convertedSchedule.schedule, // 현재 주차의 스케줄만 병합
-        },
-        isModifiedAfterSent: false, // 저장 완료 후 수정 상태 초기화
-      }));
+      const taskId = response.data.taskId;
+
+      // 즉시 피드백
+      toast({
+        title: '작업 시작',
+        description: '스케줄 저장이 시작되었습니다.',
+      });
+
+      // 폴링 시작 (완료 시 fetchTaskResultAndUpdateSchedule 자동 호출)
+      await startPolling(taskId);
+
     } catch (error) {
       console.error("[useMonthlySchedule] Failed to save schedule:", error);
       setError(error as Error);
+      setIsSaving(false);
       // 에러는 apiClient 인터셉터에서 자동으로 Toast 표시됨
       throw error; // 상위 컴포넌트에서 처리할 수 있도록 에러 전달
-    } finally {
-      setIsSaving(false);
     }
-  }, [weeklySchedules]);
+  }, [weeklySchedules, startPolling, toast]);
 
   return {
     monthlySchedule,
@@ -405,6 +457,8 @@ export function useMonthlySchedule(initialSchedule?: MonthlySchedule) {
     isLoading,
     isSaving,
     error,
+    taskStatus, // 진행 상태 표시용
+    isPolling,  // 폴링 중 여부
   };
 }
 
