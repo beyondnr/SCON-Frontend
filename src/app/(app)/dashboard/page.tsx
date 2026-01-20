@@ -47,6 +47,7 @@ import apiClient from "@/lib/api-client";
 import { getCurrentStoreId } from "@/lib/local-storage-utils";
 import { ApiStore, ApiEmployee, apiEmployeeToFrontend } from "@/lib/api-mappers";
 import { logger } from "@/lib/logger";
+import { logPageView, logEvent } from "@/lib/analytics";
 
 // 코드 스플리팅: 대용량 컴포넌트 지연 로딩
 const MonthlyCalendarView = dynamic(
@@ -165,6 +166,14 @@ export default function DashboardPage() {
         };
 
         fetchEmployees();
+    }, []);
+
+    // 페이지뷰 추적
+    useEffect(() => {
+        logPageView('/dashboard', '대시보드');
+        logEvent('view_dashboard', {
+            dashboard_timestamp: new Date().toISOString(),
+        });
     }, []);
 
     // 페이지 로드 시 및 날짜 변경 시 스케줄 조회

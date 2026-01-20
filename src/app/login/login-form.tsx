@@ -12,6 +12,7 @@ import { setCurrentStoreId } from "@/lib/local-storage-utils";
 import apiClient from "@/lib/api-client";
 import { LoginResponse, ApiStore } from "@/lib/api-mappers";
 import { logger } from "@/lib/logger";
+import { logEvent, setUserId, setStoreId } from "@/lib/analytics";
 
 // 백엔드 연동 여부 설정 (환경 변수로 관리 권장)
 // true: 백엔드 API 호출, false: 로컬 테스트 모드
@@ -89,13 +90,27 @@ export default function LoginForm() {
           ownerId: response.data?.ownerId 
         });
 
+        // 로그인 성공 이벤트
+        logEvent('login', {
+          method: 'email',
+          login_timestamp: new Date().toISOString(),
+        });
+
+        // 사용자 ID 설정 (API 응답에서 ownerId 추출)
+        // ⚠️ 주의: api-client.ts의 인터셉터가 ApiResponse<T> 래퍼를 처리하므로
+        // response.data는 실제 data 필드 값 (ownerId 포함)
+        if (response.data?.ownerId) {
+          setUserId(response.data.ownerId);
+        }
+
         // 로그인 성공 후 매장 목록 조회 및 첫 번째 매장 ID 저장
         try {
           const storesResponse = await apiClient.get<ApiStore[]>('/v1/stores');
           
-          // 매장 목록이 있고 첫 번째 매장이 있으면 storeId 저장
+          // 매장 목록이 있고 첫 번째 매장이 있으면 storeId 저장 (기존 로직 + GA4)
           if (storesResponse.data && storesResponse.data.length > 0 && storesResponse.data[0].id) {
             setCurrentStoreId(String(storesResponse.data[0].id));
+            setStoreId(String(storesResponse.data[0].id)); // GA4용
             logger.debug("Store ID set", { 
               storeId: storesResponse.data[0].id 
             });

@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { GA4Provider } from "@/components/analytics/ga4-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -36,7 +37,9 @@ export default function RootLayout({
       >
         <ErrorBoundary>
           <QueryProvider>
-            {children}
+            <GA4Provider>
+              {children}
+            </GA4Provider>
             <Toaster />
           </QueryProvider>
         </ErrorBoundary>
