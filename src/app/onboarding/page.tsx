@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { OnboardingProvider, useOnboarding } from "./onboarding-context";
@@ -19,6 +19,7 @@ import { setCurrentStoreId } from "@/lib/local-storage-utils";
 import { logger } from "@/lib/logger";
 import { useAsyncTask } from "@/hooks/use-async-task";
 import { useAsyncTaskResult } from "@/hooks/use-async-task-result";
+import { logPageView, logEvent, setUserId, setStoreId } from "@/lib/analytics";
 
 const steps = [
   { id: 1, component: Step1Account },
@@ -28,6 +29,7 @@ const steps = [
 function OnboardingWizard() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [onboardingStartTime, setOnboardingStartTime] = useState<number | null>(null);
   const { form, formData, validateAndGoNext } = useOnboarding();
   const router = useRouter();
   const { toast } = useToast();
@@ -48,6 +50,24 @@ function OnboardingWizard() {
 
   const { fetchTaskResult } = useAsyncTaskResult<ApiStore>();
 
+  // 온보딩 시작 이벤트 (Step 1 진입 시)
+  useEffect(() => {
+    if (currentStep === 1 && !onboardingStartTime) {
+      const startTime = Date.now();
+      setOnboardingStartTime(startTime);
+      
+      logPageView('/onboarding', '온보딩');
+      // 회원가입 시작 이벤트
+      logEvent('sign_up_start', {
+        signup_timestamp: new Date().toISOString(),
+      });
+      // 온보딩 시작 이벤트
+      logEvent('tutorial_begin', {
+        signup_timestamp: new Date().toISOString(),
+      });
+    }
+  }, [currentStep, onboardingStartTime]);
+
   /**
    * 매장 생성 결과 조회 및 대시보드 이동
    */
@@ -55,9 +75,10 @@ function OnboardingWizard() {
     try {
       const storeResult = await fetchTaskResult(taskId);
       
-      // 매장 ID 저장
+      // 매장 ID 저장 (기존 로직 + GA4)
       if (storeResult?.id) {
         setCurrentStoreId(String(storeResult.id));
+        setStoreId(String(storeResult.id)); // GA4용
         logger.debug("Store created and ID saved", { 
           storeId: storeResult.id 
         });
@@ -80,6 +101,23 @@ function OnboardingWizard() {
   const handleNext = async () => {
     const isValid = await validateAndGoNext(currentStep);
     if (isValid) {
+      // Step 완료 이벤트
+      if (onboardingStartTime) {
+        const timeToComplete = Math.floor((Date.now() - onboardingStartTime) / 1000);
+        
+        if (currentStep === 1) {
+          // Step 1 완료 (계정 정보)
+          logEvent('scon_onboarding_step1_complete', {
+            time_to_complete: timeToComplete,
+          });
+        } else if (currentStep === 2) {
+          // Step 2 완료 (매장 정보)
+          logEvent('scon_onboarding_step2_complete', {
+            time_to_complete: timeToComplete,
+          });
+        }
+      }
+      
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -114,6 +152,17 @@ function OnboardingWizard() {
         ownerId: signupResponse.data?.ownerId 
       });
 
+      // 회원가입 완료 이벤트
+      logEvent('sign_up', {
+        method: 'email',
+        signup_timestamp: new Date().toISOString(),
+      });
+
+      // 사용자 ID 설정 (API 응답에서 ownerId 추출)
+      if (signupResponse.data?.ownerId) {
+        setUserId(signupResponse.data.ownerId);
+      }
+
       // 2. 매장 생성 API 호출
       // 중요: API 명세서에 따르면 필드명은 openTime, closeTime (not openingTime, closingTime)
       // 참고: api-mappers.ts의 ApiStoreRequest 타입은 openingTime/closingTime을 사용하지만
@@ -144,6 +193,15 @@ function OnboardingWizard() {
         title: '매장 생성 시작',
         description: '매장 정보를 저장하는 중입니다.',
       });
+
+      // 온보딩 완료 이벤트 (회원가입 + 매장 생성 시작)
+      if (onboardingStartTime) {
+        const totalTimeToComplete = Math.floor((Date.now() - onboardingStartTime) / 1000);
+        logEvent('tutorial_complete', {
+          total_time_to_complete: totalTimeToComplete,
+          onboarding_completion_timestamp: new Date().toISOString(),
+        });
+      }
 
       // 폴링 시작 (완료 시 자동으로 대시보드 이동)
       await startPolling(taskId);

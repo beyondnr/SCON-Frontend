@@ -22,6 +22,9 @@ const clientEnvSchema = z.object({
   NEXT_PUBLIC_ENABLE_API_RESPONSE_LOGGING: z.string().optional(),
   // API Logger (console.group 기반) 환경 변수
   NEXT_PUBLIC_ENABLE_API_LOGGING: z.string().optional(),
+  // GA4 환경 변수
+  NEXT_PUBLIC_GA4_MEASUREMENT_ID: z.string().optional().default(''),
+  NEXT_PUBLIC_GA4_ENABLED: z.string().optional().default('false'),
 });
 
 /**
@@ -60,6 +63,8 @@ export function getClientEnv(): ClientEnv {
       NEXT_PUBLIC_ENABLE_API_REQUEST_LOGGING: process.env.NEXT_PUBLIC_ENABLE_API_REQUEST_LOGGING,
       NEXT_PUBLIC_ENABLE_API_RESPONSE_LOGGING: process.env.NEXT_PUBLIC_ENABLE_API_RESPONSE_LOGGING,
       NEXT_PUBLIC_ENABLE_API_LOGGING: process.env.NEXT_PUBLIC_ENABLE_API_LOGGING,
+      NEXT_PUBLIC_GA4_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID,
+      NEXT_PUBLIC_GA4_ENABLED: process.env.NEXT_PUBLIC_GA4_ENABLED,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

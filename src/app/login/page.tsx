@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Logo } from "@/components/layout/logo";
+import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 import LoginForm from "./login-form";
 import LoginFormFallback from "./login-form-fallback";
 
@@ -10,7 +11,9 @@ export const runtime = 'nodejs';
 // 메인 페이지 컴포넌트 (서버 컴포넌트)
 export default function LoginPage() {
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-muted/40 p-4">
+    <>
+      <PageViewTracker title="로그인" />
+      <div className="flex flex-col min-h-screen items-center justify-center bg-muted/40 p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
           <Logo />
@@ -20,5 +23,6 @@ export default function LoginPage() {
         </Suspense>
       </div>
     </div>
+    </>
   );
 }

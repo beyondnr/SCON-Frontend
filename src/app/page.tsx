@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Logo } from "@/components/layout/logo";
+import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 import { 
   ArrowRight, 
   CalendarDays, 
@@ -18,7 +19,9 @@ import {
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <>
+      <PageViewTracker title="랜딩 페이지" />
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* 1. Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center justify-between">
@@ -387,5 +390,6 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
